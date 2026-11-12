@@ -1,0 +1,15 @@
+import React, { useState } from 'react';
+interface TopbarProps { collapsed: boolean; onAction: (title: string) => void; }
+export const Topbar: React.FC<TopbarProps> = ({ collapsed, onAction }) => {
+  const [search, setSearch] = useState('');
+  return <header className={`fixed top-0 ${collapsed ? 'left-[76px]' : 'left-[250px]'} right-0 h-16 bg-surface-container-lowest border-b border-outline-variant/30 z-40 px-6 flex items-center justify-between shadow-[0_1px_8px_rgba(0,0,0,0.04)] transition-all duration-200`}>
+    <div className="flex items-center gap-6 min-w-0"><nav className="hidden sm:flex items-center gap-1 text-sm"><span className="text-on-surface-variant">Dashboard</span><span className="text-outline-variant">/</span><span className="text-on-surface font-semibold">Overview</span></nav>
+      <form className="relative w-56 md:w-80" onSubmit={e => { e.preventDefault(); onAction(search.trim() ? `Search results for “${search.trim()}”` : 'Search'); }}><span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-on-surface-variant">search</span><input value={search} onChange={e => setSearch(e.target.value)} className="w-full h-10 pl-9 pr-3 rounded-lg bg-surface-container-low border border-outline-variant/40 text-xs text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-primary-container" placeholder="Search students, invoices, staff..." type="search" /></form>
+    </div>
+    <div className="flex items-center gap-2 sm:gap-4"><button onClick={() => onAction('Academic Year & Term')} className="hidden md:flex items-center gap-1 bg-surface-container-low border border-outline-variant/40 px-3 py-1.5 rounded-lg hover:bg-surface-container text-xs font-semibold text-on-surface"><span className="material-symbols-outlined text-secondary text-[18px]">calendar_month</span>AY 2024-2025 • Term 2<span className="material-symbols-outlined text-on-surface-variant text-[16px]">expand_more</span></button>
+      <div className="h-6 w-px bg-outline-variant/30"/><button aria-label="Notifications" title="Notifications" onClick={() => onAction('Notifications')} className="relative p-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low"><span className="material-symbols-outlined text-[22px]">notifications</span><span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 rounded-full bg-secondary ring-2 ring-white"/></button>
+      <button aria-label="Help" title="Help & Support" onClick={() => onAction('Help & Support')} className="p-2 rounded-lg text-on-surface-variant hover:bg-surface-container-low"><span className="material-symbols-outlined text-[22px]">help_outline</span></button>
+      <button onClick={() => onAction('User Profile')} className="flex items-center gap-1 pl-1" title="User profile"><span className="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span className="material-symbols-outlined text-on-primary text-[18px]">person</span></span><span className="material-symbols-outlined text-on-surface-variant text-[18px]">keyboard_arrow_down</span></button>
+    </div>
+  </header>;
+};
