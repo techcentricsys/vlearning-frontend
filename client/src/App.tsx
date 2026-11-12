@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import AppLayout from "./components/layout/AppLayout"
 import Dashboard from "./pages/Dashboard"
+import Login from "./pages/Login"
 
 function Page({ title }: { title: string }) {
   return (
@@ -15,6 +16,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/login" element={<Login />} />
         <Route element={<AppLayout />}>
         <Route path="/" element={<Dashboard />} />
           <Route path="/students" element={<Page title="Students" />} />
