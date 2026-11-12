@@ -1,20 +1,30 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom"
+import AppLayout from "./components/layout/AppLayout"
+import Dashboard from "./pages/Dashboard"
+
+function Page({ title }: { title: string }) {
+  return (
+    <div>
+      <h2 className="text-2xl font-bold text-slate-900">{title}</h2>
+      <p className="mt-1 text-slate-500">This page is coming soon.</p>
+    </div>
+  )
+}
+
 function App() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-100">
-      <div className="bg-white p-10 rounded-2xl shadow-xl text-center">
-        <h1 className="text-4xl font-bold text-violet-700">
-          VLEARNING
-        </h1>
-
-        <p className="mt-3 text-gray-600">
-          School Management System
-        </p>
-
-        <button className="mt-6 bg-violet-700 text-white px-6 py-3 rounded-lg">
-          Get Started
-        </button>
-      </div>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route element={<AppLayout />}>
+        <Route path="/" element={<Dashboard />} />
+          <Route path="/students" element={<Page title="Students" />} />
+          <Route path="/teachers" element={<Page title="Teachers" />} />
+          <Route path="/attendance" element={<Page title="Attendance" />} />
+          <Route path="/exams" element={<Page title="Exams" />} />
+          <Route path="/fees" element={<Page title="Fees" />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   )
 }
 
