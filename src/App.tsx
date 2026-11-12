@@ -61,23 +61,88 @@ export default function App() {
           {toast && <div className="fixed top-20 right-6 bg-primary text-white px-4 py-2.5 shadow-lg z-50 text-[13px] animate-slide-up flex items-center gap-2"><span className="w-2 h-2 bg-success"></span>{toast}</div>}
 
           {section === "Dashboard" && (
-            <div>
-              <div className="grid grid-cols-4 gap-4">
-                {[
-                  { t: "Total Students", v: students.length, s: "12 new this month" },
-                  { t: "Total Teachers", v: teachers.length, s: "2 on leave today" },
-                  { t: "Fees Collected", v: `${paidCount}/${students.length}`, s: "Rs. 2,45,000 collected" },
-                  { t: "Attendance Today", v: "92%", s: "312 of 340 present" },
-                ].map((x, i) => <div key={x.t} style={{ animationDelay: `${i * 60}ms` }} className="bg-white border border-border p-4 shadow-sm card-hover animate-slide-up"><p className="text-[12px] text-muted">{x.t}</p><p className="text-[26px] font-bold mt-1">{x.v}</p><p className="text-[12px] text-teal mt-1">{x.s}</p><div className="h-[3px] bg-bg mt-3"><div className="h-full bg-primary" style={{ width: "70%" }}></div></div></div>)}
+            <div className="space-y-4">
+              {/* WELCOME BANNER */}
+              <div className="bg-primary text-white p-5 flex justify-between items-center animate-slide-up">
+                <div>
+                  <p className="text-[12px] text-slate-300">Thursday, 12 Nov 2026 • Term 2 - Week 8</p>
+                  <h2 className="text-[22px] font-semibold mt-1">Good Morning, Dr. Sarah Jenkins 👋</h2>
+                  <p className="text-[13px] text-slate-300 mt-1">Aaj 312 students present hain, 2 teachers leave par hain. 1 fee pending hai jo aaj due hai.</p>
+                  <div className="flex gap-2 mt-3">
+                    <button onClick={() => setSection("Attendance")} className="btn-press bg-white text-primary px-3 py-1.5 text-[12px] font-medium">Mark Attendance</button>
+                    <button onClick={() => setSection("Fees")} className="btn-press border border-white/30 px-3 py-1.5 text-[12px]">Collect Fee</button>
+                  </div>
+                </div>
+                <div className="hidden md:block text-right">
+                  <p className="text-[36px] font-bold leading-none">92%</p>
+                  <p className="text-[11px] text-slate-300 mt-1">Today's Attendance</p>
+                  <div className="w-[160px] h-[4px] bg-white/20 mt-2 ml-auto"><div className="h-full bg-white" style={{ width: "92%" }}></div></div>
+                </div>
               </div>
 
-              <div className="flex gap-2 mt-4 flex-wrap animate-slide-up">
+              {/* 4 STATS CARDS - ADVANCED */}
+              <div className="grid grid-cols-4 gap-4">
+                {[
+                  { t: "Total Students", v: students.length, s: "+12 this month", color: "bg-primary", icon: "S", bar: "86%" },
+                  { t: "Total Teachers", v: teachers.length, s: "2 on leave today", color: "bg-teal", icon: "T", bar: "64%" },
+                  { t: "Fees Collected", v: `${paidCount}/${students.length}`, s: "Rs. 2,45,000 collected", color: "bg-amber", icon: "Rs", bar: "75%" },
+                  { t: "Avg. Attendance", v: "92%", s: "312 of 340 present", color: "bg-success", icon: "%", bar: "92%" },
+                ].map((x, i) => (
+                  <div key={x.t} style={{ animationDelay: `${i * 60}ms` }} className="bg-white border border-border p-4 shadow-sm card-hover animate-slide-up">
+                    <div className="flex justify-between items-start">
+                      <p className="text-[12px] text-muted">{x.t}</p>
+                      <span className={`w-8 h-8 ${x.color} text-white flex items-center justify-center text-[12px] font-bold`}>{x.icon}</span>
+                    </div>
+                    <p className="text-[26px] font-bold mt-1">{x.v}</p>
+                    <p className="text-[12px] text-teal mt-0.5">{x.s}</p>
+                    <div className="h-[4px] bg-bg mt-3"><div className="h-full bg-primary transition-all duration-700" style={{ width: x.bar }}></div></div>
+                    <button onClick={() => setSection(x.t.includes("Student") ? "Students" : x.t.includes("Teacher") ? "Teachers" : x.t.includes("Fee") ? "Fees" : "Attendance")} className="text-[11px] text-primary font-medium mt-2">View Details →</button>
+                  </div>
+                ))}
+              </div>
+
+              {/* QUICK ACTIONS */}
+              <div className="flex gap-2 flex-wrap animate-slide-up">
                 {["Add Student", "Record Attendance", "Collect Fee", "Add Teacher", "Create Exam"].map(a => <button key={a} onClick={() => { if (a.includes("Student")) setSection("Students"); if (a.includes("Attendance")) setSection("Attendance"); if (a.includes("Fee")) setSection("Fees"); if (a.includes("Teacher")) setSection("Teachers"); if (a.includes("Exam")) setSection("Examinations"); }} className="btn-press bg-white border border-border px-3 py-2 text-[13px] hover:border-primary hover:text-primary">{a}</button>)}
               </div>
 
-              <div className="grid grid-cols-2 gap-4 mt-4">
-                <div className="bg-white border border-border p-4 shadow-sm card-hover animate-slide-up"><h3 className="font-semibold text-[14px]">Attendance - Last 7 Days</h3><div className="flex items-end gap-2 h-[120px] mt-4 border-b border-border">{[85, 92, 88, 95, 90, 93, 92].map((v, i) => <div key={i} className="flex-1 bg-primary text-white text-[10px] flex items-end justify-center pb-1" style={{ height: `${v}%` }}>{v}%</div>)}</div><div className="flex justify-between text-[11px] text-muted mt-1"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div></div>
-                <div className="bg-white border border-border p-4 shadow-sm card-hover animate-slide-up"><h3 className="font-semibold text-[14px]">Recent Students</h3>{students.slice(0, 4).map(s => <div key={s.id} className="flex justify-between py-2.5 border-b border-border/60 text-[13px]"><span>{s.name} - {s.class}</span><span className={s.fee === "Paid" ? "text-success font-medium" : "text-amber font-medium"}>{s.fee}</span></div>)}</div>
+              {/* CHART + RECENT + TODAY CLASSES */}
+              <div className="grid grid-cols-3 gap-4">
+                <div className="col-span-2 bg-white border border-border p-4 shadow-sm card-hover animate-slide-up">
+                  <div className="flex justify-between"><h3 className="font-semibold text-[14px]">Attendance - Last 7 Days</h3><span className="text-[11px] bg-green-50 text-success border border-green-200 px-2 py-0.5">+4% vs last week</span></div>
+                  <div className="flex items-end gap-2 h-[130px] mt-4 border-b border-border">{[85, 92, 88, 95, 90, 93, 92].map((v, i) => <div key={i} className="flex-1 flex flex-col items-center gap-1"><span className="text-[10px] font-medium">{v}%</span><div className={`w-full ${i === 6 ? "bg-primary" : "bg-slate-200"} flex items-end justify-center`} style={{ height: `${v}px` }}></div></div>)}</div>
+                  <div className="flex justify-between text-[11px] text-muted mt-2 px-1"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+                </div>
+
+                <div className="bg-white border border-border p-4 shadow-sm card-hover animate-slide-up">
+                  <h3 className="font-semibold text-[14px]">Today's Classes</h3>
+                  {[
+                    { time: "08:00 - 08:45", sub: "Mathematics - 10-A", teacher: "Ahmed Raza", color: "bg-primary" },
+                    { time: "09:00 - 09:45", sub: "English - 9-B", teacher: "Sana Iqbal", color: "bg-teal" },
+                    { time: "10:00 - 10:45", sub: "Science - 8-C", teacher: "Bilal Ahmed", color: "bg-amber" },
+                  ].map(c => (
+                    <div key={c.sub} className="flex gap-3 py-2.5 border-b border-border/60">
+                      <div className={`w-1 ${c.color}`}></div>
+                      <div><p className="text-[13px] font-medium">{c.sub}</p><p className="text-[11px] text-muted">{c.time} • {c.teacher}</p></div>
+                      <span className="ml-auto text-[11px] bg-bg px-1.5 py-0.5 h-fit">Live</span>
+                    </div>
+                  ))}
+                  <button onClick={() => setSection("Timetable")} className="w-full mt-3 border border-border py-1.5 text-[12px] btn-press hover:bg-bg">View Full Timetable</button>
+                </div>
+              </div>
+
+              {/* RECENT STUDENTS + FEE ALERT */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-white border border-border p-4 shadow-sm card-hover animate-slide-up">
+                  <div className="flex justify-between"><h3 className="font-semibold text-[14px]">Recent Students</h3><button onClick={() => setSection("Students")} className="text-[12px] text-primary">View All →</button></div>
+                  {students.slice(0, 4).map(s => <div key={s.id} className="flex justify-between items-center py-2.5 border-b border-border/60 text-[13px]"><div className="flex gap-2 items-center"><span className="w-7 h-7 bg-slate-100 flex items-center justify-center text-[11px] font-bold">{s.name.charAt(0)}</span><span>{s.name} <span className="text-muted text-[11px]">• {s.class}</span></span></div><span className={s.fee === "Paid" ? "text-success font-medium text-[12px]" : "text-amber font-medium text-[12px]"}>{s.fee}</span></div>)}
+                </div>
+                <div className="bg-white border border-border p-4 shadow-sm card-hover animate-slide-up">
+                  <h3 className="font-semibold text-[14px]">Fee Alerts</h3>
+                  <div className="bg-amber-50 border border-amber-200 p-3 mt-3 text-[13px] flex gap-2"><span>⚠</span><span><b>Hassan Raza - Class 8-C</b><br /><span className="text-[12px] text-muted">Rs. 5,000 pending since 5 Nov. Last reminder sent 2 days ago.</span></span></div>
+                  <div className="bg-green-50 border border-green-200 p-3 mt-2 text-[13px] flex gap-2"><span>✓</span><span><b>Ayesha Khan - Class 10-A</b><br /><span className="text-[12px] text-muted">Rs. 5,000 paid today via bank transfer.</span></span></div>
+                  <button onClick={() => setSection("Fees")} className="btn-press w-full bg-primary text-white py-2 text-[12px] mt-3">Go to Fee Management</button>
+                </div>
               </div>
             </div>
           )}
