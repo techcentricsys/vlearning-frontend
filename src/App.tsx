@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import Sidebar from "./components/Sidebar";
 import Login from "./components/Login";
 import Register from "./components/Register";
+import StudentModule from "./components/StudentModule";
 
 const initialStudents = [
   { id: 1, name: "Ayesha Khan", class: "Class 10-A", roll: "VL-101", phone: "0300-1234567", fee: "Paid", attendance: "92%" },
@@ -27,7 +28,6 @@ export default function App() {
   const [attendance, setAttendance] = useState<Record<number, string>>({});
 
   const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(""), 2500); };
-  const filteredStudents = useMemo(() => students.filter(s => s.name.toLowerCase().includes(search.toLowerCase()) || s.roll.toLowerCase().includes(search.toLowerCase())), [students, search]);
   const filteredTeachers = useMemo(() => teachers.filter(t => t.name.toLowerCase().includes(search.toLowerCase())), [teachers, search]);
 
   const addStudent = () => {
@@ -82,13 +82,7 @@ export default function App() {
             </div>
           )}
 
-          {section === "Students" && (
-            <div className="bg-white border border-border p-4 shadow-sm animate-slide-up">
-              <div className="flex justify-between items-center"><h2 className="font-semibold text-[16px]">Students ({filteredStudents.length})</h2><button onClick={() => setShowAdd(true)} className="btn-press bg-primary text-white px-3 py-2 text-[13px]">+ Add Student</button></div>
-              <table className="w-full mt-4 text-[13px]"><thead><tr className="text-left text-muted border-b border-border bg-bg"><th className="py-2 px-2 font-medium">Name</th><th className="font-medium">Class</th><th className="font-medium">Roll No</th><th className="font-medium">Phone</th><th className="font-medium">Fee Status</th><th className="font-medium">Action</th></tr></thead><tbody>{filteredStudents.map(s => <tr key={s.id} className="border-b border-border/60 hover:bg-bg/50 transition-colors"><td className="py-3 px-2 font-medium">{s.name}</td><td>{s.class}</td><td>{s.roll}</td><td>{s.phone}</td><td><span className={`px-2 py-0.5 text-[11px] border ${s.fee === "Paid" ? "bg-green-50 text-success border-green-200" : "bg-amber-50 text-amber border-amber-200"}`}>{s.fee}</span></td><td className="flex gap-1 py-2"><button onClick={() => collectFee(s.id)} className="btn-press bg-teal text-white px-2 py-1 text-[11px]">Collect Fee</button><button onClick={() => deleteStudent(s.id)} className="btn-press border border-danger/30 text-danger px-2 py-1 text-[11px]">Delete</button></td></tr>)}</tbody></table>
-              {filteredStudents.length === 0 && <p className="text-center py-8 text-muted">No student found. Try different search or add new student.</p>}
-            </div>
-          )}
+          {section === "Students" && <StudentModule />}
 
           {section === "Teachers" && (
             <div className="bg-white border border-border p-4 shadow-sm animate-slide-up"><h2 className="font-semibold text-[16px]">Teachers ({filteredTeachers.length})</h2><div className="grid grid-cols-3 gap-3 mt-4">{filteredTeachers.map(t => <div key={t.id} className="border border-border p-3 card-hover"><p className="font-semibold">{t.name}</p><p className="text-[12px] text-muted">{t.subject} - {t.class}</p><p className="text-[13px] mt-2">Salary: Rs. {t.salary}</p><p className="text-[12px] text-muted">Phone: {t.phone}</p><button onClick={() => showToast(`Message sent to ${t.name}`)} className="btn-press mt-3 bg-primary text-white px-3 py-1.5 text-[12px] w-full">Send Message</button></div>)}</div></div>
