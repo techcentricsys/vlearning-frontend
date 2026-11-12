@@ -1,4 +1,6 @@
-const menu = [
+import { useState } from "react";
+
+const initialMenu = [
   { section: "MAIN MENU", items: [
     { label: "Dashboard", value: "Dashboard" },
     { label: "Students", value: "Students" },
@@ -7,6 +9,7 @@ const menu = [
     { label: "Attendance", value: "Attendance" },
     { label: "Fees & Accounts", value: "Fees" },
     { label: "Examinations", value: "Examinations" },
+    { label: "Timetable", value: "Timetable" },
   ]},
   { section: "MANAGEMENT", items: [
     { label: "Teachers & Staff", value: "Teachers" },
@@ -22,53 +25,109 @@ const menu = [
   ]},
 ];
 
-export default function Sidebar({ onNavigate, active }: any) {
+export default function Sidebar({ onNavigate }: any) {
+  const [selected, setSelected] = useState("Dashboard");
+  const [collapsed, setCollapsed] = useState(false);
+  const [menu, setMenu] = useState(initialMenu);
+  const [showAdd, setShowAdd] = useState(false);
+  const [newLabel, setNewLabel] = useState("");
+  const [newSection, setNewSection] = useState("MAIN MENU");
+
+  const addMenu = () => {
+    if (!newLabel.trim()) return alert("Menu ka naam likho");
+    setMenu(menu.map(g => g.section === newSection ? { ...g, items: [...g.items, { label: newLabel, value: "Dashboard" }] } : g));
+    setNewLabel(""); setShowAdd(false);
+  };
+
   return (
-    <aside className="w-[260px] min-h-screen bg-white border-r border-border p-4 flex flex-col sticky top-0">
-      <div className="flex items-center gap-2 px-2 mb-6 pb-4 border-b border-border">
-        <div className="w-9 h-9 bg-primary text-white flex items-center justify-center font-bold text-[16px]">V</div>
-        <div>
-          <p className="font-semibold text-[14px] leading-none text-text">VLearnings <span className="text-[10px] bg-slate-100 text-secondary px-1.5 py-0.5 ml-1 font-medium border border-border">SMS</span></p>
-          <p className="text-[11px] text-muted mt-1">School Management System</p>
-        </div>
-      </div>
+    <>
+      <aside className={`${collapsed ? "w-[68px]" : "w-[260px]"} min-h-screen bg-white border-r border-border flex flex-col sticky top-0 transition-all duration-300 ease-in-out overflow-hidden shrink-0`}>
+        
+        {/* TOP - LOGO + HAMBURGER */}
+        <div className="flex items-center gap-2 px-3 py-4 border-b border-border">
+          {/* HAMBURGER BUTTON - ANIMATION */}
+          <button onClick={() => setCollapsed(!collapsed)} className="w-9 h-9 flex flex-col items-center justify-center gap-[5px] hover:bg-slate-100 shrink-0">
+            <span className={`block h-[2px] bg-text transition-all duration-300 ${collapsed ? "w-[20px] rotate-45 translate-y-[7px]" : "w-[20px]"}`}></span>
+            <span className={`block h-[2px] bg-text transition-all duration-300 ${collapsed ? "w-[20px] opacity-0" : "w-[20px]"}`}></span>
+            <span className={`block h-[2px] bg-text transition-all duration-300 ${collapsed ? "w-[20px] -rotate-45 -translate-y-[7px]" : "w-[20px]"}`}></span>
+          </button>
 
-      {menu.map((g) => (
-        <div key={g.section} className="mb-5">
-          <p className="text-[11px] font-semibold text-muted px-2 mb-2 tracking-wide">{g.section}</p>
-          {g.items.map((item) => {
-            const isActive = active === item.value && (
-              // Admissions ko Students ke saath active dikhao
-              (item.label === "Admissions" ? active === "Students" : true) &&
-              (item.label === "Academics" ? active === "Examinations" : true)
-            );
-            // Simple active logic - exact match ya mapping
-            const activeCheck = active === item.value;
-            return (
-              <button
-                key={item.label}
-                onClick={() => onNavigate(item.value)}
-                className={`w-full text-left px-3 py-2 text-[13.5px] mb-0.5 border-l-2 ${
-                  activeCheck
-                    ? "bg-slate-100 text-primary font-semibold border-primary"
-                    : "text-secondary border-transparent hover:bg-slate-50 hover:text-text"
-                }`}
-              >
-                {item.label}
-              </button>
-            );
-          })}
+          {!collapsed && (
+            <div className="flex items-center gap-2 whitespace-nowrap">
+              <div className="w-9 h-9 bg-primary text-white flex items-center justify-center font-bold text-[16px] shrink-0">V</div>
+              <div>
+                <p className="font-semibold text-[14px] leading-none">VLearnings <span className="text-[10px] bg-slate-100 text-secondary px-1.5 py-0.5 ml-1 font-medium border border-border">SMS</span></p>
+                <p className="text-[11px] text-muted mt-1">School Management System</p>
+              </div>
+            </div>
+          )}
         </div>
-      ))}
 
-      <div className="mt-auto flex items-center gap-2 p-3 border-t border-border bg-bg">
-        <div className="w-8 h-8 bg-primary text-white flex items-center justify-center text-[12px] font-bold">SJ</div>
-        <div className="flex-1 min-w-0">
-          <p className="text-[13px] font-semibold leading-none truncate">Dr. Sarah Jenkins</p>
-          <p className="text-[11px] text-muted mt-0.5">Super Admin</p>
+        {/* ADD MENU */}
+        {!collapsed && (
+          <div className="flex justify-between items-center px-4 mt-3 mb-3">
+            <p className="text-[11px] font-semibold text-muted tracking-wide">MENU</p>
+            <button onClick={() => setShowAdd(true)} className="bg-primary text-white px-2 py-1 text-[11px] font-medium">+ Add Menu</button>
+          </div>
+        )}
+        {collapsed && <div className="h-3"></div>}
+
+        {/* MENU LIST */}
+        <div className="flex-1 overflow-y-auto px-2">
+          {menu.map((g) => (
+            <div key={g.section} className="mb-4">
+              {!collapsed && <p className="text-[11px] font-semibold text-muted px-2 mb-2 tracking-wide">{g.section}</p>}
+              {collapsed && <div className="h-px bg-border mx-2 mb-2"></div>}
+              {g.items.map((item) => {
+                const isActive = selected === item.label;
+                return (
+                  <button
+                    key={item.label}
+                    title={item.label}
+                    onClick={() => { setSelected(item.label); onNavigate(item.value); }}
+                    className={`w-full text-left px-3 py-2 text-[13.5px] mb-0.5 border-l-2 flex items-center gap-2 transition-all duration-200 ${
+                      isActive ? "bg-slate-100 text-primary font-semibold border-primary" : "text-secondary border-transparent hover:bg-slate-50 hover:text-text"
+                    }`}
+                  >
+                    <span className={`w-6 h-6 flex items-center justify-center text-[12px] font-bold shrink-0 ${isActive ? "bg-primary text-white" : "bg-slate-100 text-secondary"}`}>
+                      {item.label.charAt(0)}
+                    </span>
+                    {!collapsed && <span className="truncate">{item.label}</span>}
+                  </button>
+                );
+              })}
+            </div>
+          ))}
         </div>
-        <span className="w-2 h-2 bg-success"></span>
-      </div>
-    </aside>
+
+        {/* BOTTOM PROFILE */}
+        <div className="flex items-center gap-2 p-3 border-t border-border bg-bg">
+          <div className="w-8 h-8 bg-primary text-white flex items-center justify-center text-[12px] font-bold shrink-0">SJ</div>
+          {!collapsed && (
+            <div className="flex-1 min-w-0">
+              <p className="text-[13px] font-semibold leading-none truncate">Dr. Sarah Jenkins</p>
+              <p className="text-[11px] text-muted mt-0.5">Super Admin</p>
+            </div>
+          )}
+          {!collapsed && <span className="w-2 h-2 bg-success shrink-0"></span>}
+        </div>
+      </aside>
+
+      {showAdd && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white p-6 w-[360px] shadow-lg">
+            <h3 className="font-semibold text-[16px]">Add New Menu</h3>
+            <input value={newLabel} onChange={e => setNewLabel(e.target.value)} placeholder="Menu Name e.g. Discipline" className="w-full border border-border px-3 py-2 mt-3 text-[13px] outline-none focus:border-primary" />
+            <select value={newSection} onChange={e => setNewSection(e.target.value)} className="w-full border border-border px-3 py-2 mt-2 text-[13px]">
+              <option>MAIN MENU</option><option>MANAGEMENT</option><option>SYSTEM</option>
+            </select>
+            <div className="flex gap-2 mt-4">
+              <button onClick={addMenu} className="flex-1 bg-primary text-white py-2 text-[13px]">Add Menu</button>
+              <button onClick={() => setShowAdd(false)} className="flex-1 border border-border py-2 text-[13px]">Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
