@@ -1,36 +1,32 @@
-# Project Name
-* **VLEARNING**
+# React + TypeScript + Vite
 
----
+This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
-## 🚀 Tech Stack
+Currently, two official plugins are available:
 
-*   **Frontend:** [React](https://react.dev/), [Vite](https://vite.dev/), [TypeScript](https://www.typescriptlang.org/)
-*   **Backend:** [Node.js](https://nodejs.org/), [Express](https://expressjs.com/) *(or your chosen framework)*, [TypeScript](https://www.typescriptlang.org/)
-*   **Styling:** [Tailwind CSS](https://tailwindcss.com/) *(Update if using another tool)*
-*   **Database:** [MongoDB / PostgreSQL / etc.] *(Optional)*
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
----
+## React Compiler
 
-## 📁 Project Structure
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-```text
-root/
-├── client/                 # Frontend (React + Vite)
-│   ├── src/
-│   │   ├── components/     # Reusable UI components
-│   │   ├── pages/          # Application views/pages
-│   │   ├── App.tsx
-│   │   └── main.tsx
-│   ├── index.html
-│   └── package.json
-│
-├── server/                 # Backend (Node.js + TypeScript)
-│   ├── src/
-│   │   ├── controllers/    # Route logic
-│   │   ├── models/         # Database models
-│   │   ├── routes/         # API endpoints
-│   │   └── index.ts        # Server entry point
-│   └── package.json
-│
-└── package.json            # Root workspace configuration (if monorepo)
+## Expanding the Oxlint configuration
+
+If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+
+```json
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["react", "typescript", "oxc"],
+  "options": {
+    "typeAware": true
+  },
+  "rules": {
+    "react/rules-of-hooks": "error",
+    "react/only-export-components": ["warn", { "allowConstantExport": true }]
+  }
+}
+```
+
+See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
