@@ -1,57 +1,76 @@
+import { useState } from "react";
+
 export default function Login({ goRegister, goDashboard }: any) {
+  const [email, setEmail] = useState("admin@vlearnings.edu");
+  const [password, setPassword] = useState("admin123");
+  const [showPass, setShowPass] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleLogin = () => {
+    if (!email || !password) { setError("Please enter email and password"); return; }
+    setLoading(true); setError("");
+    setTimeout(() => { setLoading(false); goDashboard(); }, 800);
+  };
+
   return (
-    <div className="min-h-screen grid md:grid-cols-2">
-      {/* Left - Branding */}
-      <div className="bg-[#EAF0FF] p-10 hidden md:flex flex-col justify-between">
+    <div className="min-h-screen flex bg-white animate-fade">
+      {/* LEFT - BRANDING */}
+      <div className="hidden lg:flex w-[46%] bg-primary text-white flex-col justify-between p-10 animate-slide-left">
         <div className="flex items-center gap-2">
-          <div className="w-9 h-9 bg-primary rounded-lg text-white flex items-center justify-center font-bold">V</div>
-          <b className="font-heading">VLearnings</b>
-          <span className="text-[11px] bg-white px-2 py-1 rounded-full">SMS Cloud v2.4</span>
+          <div className="w-10 h-10 bg-white text-primary flex items-center justify-center font-bold text-[18px]">V</div>
+          <div><p className="font-semibold text-[16px]">VLearnings</p><p className="text-[11px] text-slate-300">School Management System</p></div>
         </div>
         <div>
-          <span className="text-[11px] bg-white px-3 py-1 rounded-full text-primary font-semibold">● UNIFIED ACADEMIC OPERATING SYSTEM</span>
-          <h1 className="font-heading text-[42px] leading-[1.1] font-extrabold mt-4">Smarter School Management<br/>Starts Here</h1>
-          <p className="text-slate-600 mt-3 text-[15px]">Manage students, faculty, grading cycles, attendance rosters, and institutional workflows from one synchronized platform.</p>
-          <div className="bg-[#0F172A] text-white rounded-2xl p-5 mt-6">
-            <p className="text-[11px] text-slate-400">INSTITUTION ANALYTICS • Term 2 • 2024-25</p>
-            <p className="font-heading font-bold text-lg mt-1">Faculty & Learner Pulse</p>
-            <div className="grid grid-cols-3 gap-4 mt-4">
-              <div><p className="text-[11px] text-slate-400">Attendance</p><b>97.8%</b></div>
-              <div><p className="text-[11px] text-slate-400">GPA Index</p><b>3.84</b></div>
-              <div><p className="text-[11px] text-slate-400">Fee Clearance</p><b>94.2%</b></div>
-            </div>
-          </div>
-          <div className="grid grid-cols-3 gap-3 mt-4">
-            {["Simplified Ops", "Real-Time Insights", "Connected Campus"].map(t => (
-              <div key={t} className="bg-white rounded-xl p-3"><b className="text-[12px]">{t}</b><p className="text-[11px] text-slate-500">Automated grading, schedules & workflows.</p></div>
-            ))}
+          <h1 className="text-[32px] font-semibold leading-[1.2]">Manage your entire<br/>school in one place.</h1>
+          <p className="text-slate-300 text-[14px] mt-3 leading-relaxed max-w-[380px]">Students, attendance, fees, examinations and staff — everything your school needs, in a single secure system.</p>
+          <div className="mt-8 space-y-3 text-[13px]">
+            <p className="flex gap-2"><span className="w-5 h-5 bg-white/10 flex items-center justify-center text-[11px]">✓</span> Trusted by 120+ schools across Pakistan</p>
+            <p className="flex gap-2"><span className="w-5 h-5 bg-white/10 flex items-center justify-center text-[11px]">✓</span> Secure data • Daily backup • Role-based access</p>
+            <p className="flex gap-2"><span className="w-5 h-5 bg-white/10 flex items-center justify-center text-[11px]">✓</span> Works on mobile, tablet and desktop</p>
           </div>
         </div>
-        <p className="text-[11px] text-slate-500">Trusted by 450+ educational institutions across 18 countries</p>
+        <div className="flex items-center gap-3 border-t border-white/10 pt-5">
+          <div className="w-9 h-9 bg-white/10 flex items-center justify-center text-[12px] font-bold">SJ</div>
+          <div><p className="text-[13px] font-medium">Dr. Sarah Jenkins</p><p className="text-[11px] text-slate-400">Super Admin, VLearnings School</p></div>
+          <p className="ml-auto text-[11px] text-slate-400">© 2026 VLearnings</p>
+        </div>
       </div>
 
-      {/* Right - Form */}
-      <div className="p-8 md:p-14 flex flex-col justify-center max-w-[520px] w-full mx-auto">
-        <h2 className="font-heading text-[28px] font-bold">Welcome Back</h2>
-        <p className="text-slate-500 text-[14px]">Sign in to access your administrative dashboard & academic workflows.</p>
+      {/* RIGHT - FORM */}
+      <div className="flex-1 flex items-center justify-center p-6 bg-white">
+        <div className="w-full max-w-[400px] animate-slide-up">
+          <div className="lg:hidden flex items-center gap-2 mb-8"><div className="w-9 h-9 bg-primary text-white flex items-center justify-center font-bold">V</div><p className="font-semibold">VLearnings</p></div>
+          <h2 className="text-[24px] font-semibold">Welcome back</h2>
+          <p className="text-muted text-[13px] mt-1">Sign in to your account to continue. Demo account is pre-filled.</p>
 
-        <div className="flex bg-slate-100 p-1 rounded-lg mt-6 text-[13px] font-medium">
-          <button className="flex-1 bg-white py-2 rounded-md shadow-sm">Staff & Faculty</button>
-          <button className="flex-1 py-2 text-slate-500">Student & Parent</button>
+          {error && <div className="mt-4 bg-red-50 border border-red-200 text-danger text-[13px] px-3 py-2">{error}</div>}
+
+          <label className="block text-[12px] font-medium mt-6 mb-1.5">Email Address</label>
+          <input value={email} onChange={e => setEmail(e.target.value)} placeholder="you@school.edu" className="w-full border border-border px-3 py-2.5 text-[13px] bg-white" />
+
+          <label className="block text-[12px] font-medium mt-4 mb-1.5">Password</label>
+          <div className="relative">
+            <input type={showPass ? "text" : "password"} value={password} onChange={e => setPassword(e.target.value)} placeholder="Enter password" className="w-full border border-border px-3 py-2.5 text-[13px] pr-16" />
+            <button onClick={() => setShowPass(!showPass)} className="absolute right-3 top-2.5 text-[12px] text-primary font-medium">{showPass ? "Hide" : "Show"}</button>
+          </div>
+
+          <div className="flex justify-between items-center mt-3 text-[12px]">
+            <label className="flex items-center gap-1.5 text-secondary"><input type="checkbox" defaultChecked className="accent-[#1B2A4A]" /> Remember me</label>
+            <button className="text-primary font-medium">Forgot password?</button>
+          </div>
+
+          <button onClick={handleLogin} disabled={loading} className="btn-press w-full bg-primary text-white py-2.5 text-[13px] font-medium mt-6 disabled:opacity-60">
+            {loading ? "Signing in..." : "Sign In"}
+          </button>
+
+          <div className="flex items-center gap-3 my-5"><div className="flex-1 h-px bg-border"></div><span className="text-[11px] text-muted">OR</span><div className="flex-1 h-px bg-border"></div></div>
+
+          <button onClick={goDashboard} className="btn-press w-full border border-border py-2.5 text-[13px] bg-white hover:bg-bg">Continue as Guest - View Demo</button>
+
+          <p className="text-center text-[12px] text-muted mt-5">Don't have an account? <button onClick={goRegister} className="text-primary font-semibold">Create account</button></p>
+          <p className="text-center text-[11px] text-muted mt-4">By signing in, you agree to our Terms & Privacy Policy.<br/>Need help? support@vlearnings.edu</p>
         </div>
-
-        <label className="mt-6 text-[13px] font-medium">Institutional Email</label>
-        <input placeholder="faculty.lead@academy.edu" className="w-full mt-1 border border-border rounded-lg px-3 py-2.5 outline-none focus:border-primary" />
-        <label className="mt-4 text-[13px] font-medium flex justify-between">Security Password <span className="text-primary text-[12px] cursor-pointer">Forget password?</span></label>
-        <input type="password" placeholder="••••••••••" className="w-full mt-1 border border-border rounded-lg px-3 py-2.5 outline-none focus:border-primary" />
-
-        <label className="flex gap-2 items-center mt-3 text-[13px]"><input type="checkbox" defaultChecked className="accent-[#4338CA]" /> Remember device for 30 days</label>
-
-        <button onClick={goDashboard} className="w-full bg-primary hover:bg-[#3730A3] text-white py-3 rounded-lg font-semibold mt-5">Sign In to Dashboard →</button>
-        <p className="text-center text-[12px] text-slate-400 my-3">OR CONTINUE WITH</p>
-        <button className="w-full border border-border py-2.5 rounded-lg text-[13px] font-medium">G Sign in with Google Workspace for Education</button>
-
-        <p className="text-center text-[13px] mt-5 text-slate-500">Don't have an institution account? <button onClick={goRegister} className="text-primary font-semibold">Enroll School</button> • Request Live Demo</p>
       </div>
     </div>
   );
