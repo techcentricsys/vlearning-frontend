@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { Link } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
 import {
   GraduationCap,
@@ -10,12 +11,12 @@ import {
   EyeOff,
   ArrowRight,
   ShieldCheck,
-  CircleHelp,
   RefreshCw,
   Landmark,
   TrendingUp,
   Users,
   Check,
+    UserPlus,
 } from "lucide-react"
 
 const bars = [
@@ -159,9 +160,12 @@ function Login() {
             <span className="w-2 h-2 rounded-full bg-teal-700" />
             System Status: <b>Operational</b>
           </span>
-          <a href="#" className="flex items-center gap-1 text-indigo-700 font-medium">
-            <CircleHelp size={16} /> Admin Helpdesk
-          </a>
+                    <Link
+            to="/signup"
+            className="flex items-center gap-2 bg-indigo-700 hover:bg-indigo-800 text-white font-semibold rounded-lg px-4 py-2 transition"
+          >
+            <UserPlus size={16} /> Sign Up
+          </Link>
         </div>
 
         <div className="flex-1 flex items-center">
@@ -273,7 +277,7 @@ function Login() {
 
             <p className="mt-6 text-center text-sm text-slate-600">
               Don&apos;t have an institution account?{" "}
-              <a href="#" className="font-semibold text-teal-800">Enroll School</a>
+           <Link to="/signup" className="font-semibold text-teal-800">Create Account</Link>
               {" • "}
               <a href="#" className="font-semibold text-teal-800">Request Live Demo</a>
             </p>

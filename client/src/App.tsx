@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom"
 import AppLayout from "./components/layout/AppLayout"
 import Dashboard from "./pages/Dashboard"
 import Login from "./pages/Login"
+import Signup from "./pages/Signup"
 
 function Page({ title }: { title: string }) {
   return (
@@ -34,6 +35,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
         <Route element={<AppLayout />}>
           <Route path="/" element={<Dashboard />} />
           {pages.map((p) => (
