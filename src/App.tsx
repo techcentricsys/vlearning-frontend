@@ -1,108 +1,34 @@
-import { useState, useMemo } from "react";
-import Sidebar from "./components/Sidebar";
-import Login from "./components/Login";
-import Register from "./components/Register";
-import StudentModule from "./components/StudentModule";
+import React, { useState } from 'react';
+import { Sidebar } from './components/layout/Sidebar';
+import { Topbar } from './components/layout/Topbar';
+import { DashboardPage } from './modules/dashboard/pages/DashboardPage';
 
-const initialStudents = [
-  { id: 1, name: "Ayesha Khan", class: "Class 10-A", roll: "VL-101", phone: "0300-1234567", fee: "Paid", attendance: "92%" },
-  { id: 2, name: "Muhammad Ali", class: "Class 9-B", roll: "VL-102", phone: "0301-7654321", fee: "Pending", attendance: "88%" },
-  { id: 3, name: "Fatima Noor", class: "Class 10-A", roll: "VL-103", phone: "0321-9876543", fee: "Paid", attendance: "95%" },
-  { id: 4, name: "Hassan Raza", class: "Class 8-C", roll: "VL-104", phone: "0333-1122334", fee: "Pending", attendance: "81%" },
-];
-const initialTeachers = [
-  { id: 1, name: "Ahmed Raza", subject: "Mathematics", class: "10-A", phone: "0300-1112223", salary: "85,000" },
-  { id: 2, name: "Sana Iqbal", subject: "English", class: "9-B", phone: "0300-4445556", salary: "78,000" },
-  { id: 3, name: "Bilal Ahmed", subject: "Science", class: "8-C", phone: "0300-7778889", salary: "82,000" },
-];
-
-export default function App() {
-  const [page, setPage] = useState("login");
-  const [section, setSection] = useState("Dashboard");
-  const [students, setStudents] = useState(initialStudents);
-  const [teachers, setTeachers] = useState(initialTeachers);
-  const [search, setSearch] = useState("");
-  const [showAdd, setShowAdd] = useState(false);
-  const [form, setForm] = useState({ name: "", class: "Class 10-A", roll: "", phone: "" });
-  const [toast, setToast] = useState("");
-  const [attendance, setAttendance] = useState<Record<number, string>>({});
-
-  const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(""), 2500); };
-  const filteredTeachers = useMemo(() => teachers.filter(t => t.name.toLowerCase().includes(search.toLowerCase())), [teachers, search]);
-
-  const addStudent = () => {
-    if (!form.name || !form.roll) return alert("Name and Roll No are required");
-    setStudents([...students, { id: Date.now(), name: form.name, class: form.class, roll: form.roll, phone: form.phone, fee: "Pending", attendance: "100%" }]);
-    setShowAdd(false); setForm({ name: "", class: "Class 10-A", roll: "", phone: "" }); showToast("Student added successfully");
-  };
-  const collectFee = (id: number) => { setStudents(students.map(s => s.id === id ? { ...s, fee: "Paid" } : s)); showToast("Fee collected successfully"); };
-  const deleteStudent = (id: number) => { if (confirm("Are you sure you want to delete this student?")) { setStudents(students.filter(s => s.id !== id)); showToast("Student deleted"); } };
-
-  if (page === "login") return <Login goRegister={() => setPage("register")} goDashboard={() => setPage("dashboard")} />;
-  if (page === "register") return <Register goLogin={() => setPage("login")} goDashboard={() => setPage("dashboard")} />;
-
-  const paidCount = students.filter(s => s.fee === "Paid").length;
-
-  return (
-    <div className="flex min-h-screen bg-bg text-text font-sans">
-      <Sidebar active={section} onNavigate={(s: string) => { setSection(s); setSearch(""); }} />
-      <div className="flex-1 flex flex-col min-w-0">
-        <header className="bg-white border-b border-border px-6 py-3 flex items-center justify-between sticky top-0 z-10">
-          <div><p className="text-[11px] text-muted">VLearnings / {section}</p><p className="font-semibold text-[16px]">{section}</p></div>
-          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search students, roll no, teachers..." className="w-[380px] bg-bg border border-border px-3 py-2 text-[13px] outline-none focus:border-primary" />
-          <div className="flex gap-2 items-center text-[13px]">
-            <button onClick={() => showToast("3 new notifications: Fee received, Attendance submitted")} className="btn-press border border-border px-3 py-1.5 bg-white hover:bg-bg">Notifications <span className="bg-danger text-white text-[10px] px-1.5 py-0.5 ml-1">3</span></button>
-            <button onClick={() => setSection("Settings")} className="btn-press border border-border px-3 py-1.5 bg-white hover:bg-bg">Settings</button>
-            <button onClick={() => setPage("login")} className="btn-press bg-danger text-white px-3 py-1.5 text-[12px] font-medium">Logout</button>
-          </div>
-        </header>
-
-        <div className="p-6 animate-fade">
-          {toast && <div className="fixed top-20 right-6 bg-primary text-white px-4 py-2.5 shadow-lg z-50 text-[13px] animate-slide-up flex items-center gap-2"><span className="w-2 h-2 bg-success"></span>{toast}</div>}
-
-          {section === "Dashboard" && (
-            <div>
-              <div className="grid grid-cols-4 gap-4">
-                {[
-                  { t: "Total Students", v: students.length, s: "12 new this month" },
-                  { t: "Total Teachers", v: teachers.length, s: "2 on leave today" },
-                  { t: "Fees Collected", v: `${paidCount}/${students.length}`, s: "Rs. 2,45,000 collected" },
-                  { t: "Attendance Today", v: "92%", s: "312 of 340 present" },
-                ].map((x, i) => <div key={x.t} style={{ animationDelay: `${i * 60}ms` }} className="bg-white border border-border p-4 shadow-sm card-hover animate-slide-up"><p className="text-[12px] text-muted">{x.t}</p><p className="text-[26px] font-bold mt-1">{x.v}</p><p className="text-[12px] text-teal mt-1">{x.s}</p><div className="h-[3px] bg-bg mt-3"><div className="h-full bg-primary" style={{ width: "70%" }}></div></div></div>)}
-              </div>
-
-              <div className="flex gap-2 mt-4 flex-wrap animate-slide-up">
-                {["Add Student", "Record Attendance", "Collect Fee", "Add Teacher", "Create Exam"].map(a => <button key={a} onClick={() => { if (a.includes("Student")) setSection("Students"); if (a.includes("Attendance")) setSection("Attendance"); if (a.includes("Fee")) setSection("Fees"); if (a.includes("Teacher")) setSection("Teachers"); if (a.includes("Exam")) setSection("Examinations"); }} className="btn-press bg-white border border-border px-3 py-2 text-[13px] hover:border-primary hover:text-primary">{a}</button>)}
-              </div>
-
-              <div className="grid grid-cols-2 gap-4 mt-4">
-                <div className="bg-white border border-border p-4 shadow-sm card-hover animate-slide-up"><h3 className="font-semibold text-[14px]">Attendance - Last 7 Days</h3><div className="flex items-end gap-2 h-[120px] mt-4 border-b border-border">{[85, 92, 88, 95, 90, 93, 92].map((v, i) => <div key={i} className="flex-1 bg-primary text-white text-[10px] flex items-end justify-center pb-1" style={{ height: `${v}%` }}>{v}%</div>)}</div><div className="flex justify-between text-[11px] text-muted mt-1"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div></div>
-                <div className="bg-white border border-border p-4 shadow-sm card-hover animate-slide-up"><h3 className="font-semibold text-[14px]">Recent Students</h3>{students.slice(0, 4).map(s => <div key={s.id} className="flex justify-between py-2.5 border-b border-border/60 text-[13px]"><span>{s.name} - {s.class}</span><span className={s.fee === "Paid" ? "text-success font-medium" : "text-amber font-medium"}>{s.fee}</span></div>)}</div>
-              </div>
-            </div>
-          )}
-
-          {section === "Students" && <StudentModule />}
-
-          {section === "Teachers" && (
-            <div className="bg-white border border-border p-4 shadow-sm animate-slide-up"><h2 className="font-semibold text-[16px]">Teachers ({filteredTeachers.length})</h2><div className="grid grid-cols-3 gap-3 mt-4">{filteredTeachers.map(t => <div key={t.id} className="border border-border p-3 card-hover"><p className="font-semibold">{t.name}</p><p className="text-[12px] text-muted">{t.subject} - {t.class}</p><p className="text-[13px] mt-2">Salary: Rs. {t.salary}</p><p className="text-[12px] text-muted">Phone: {t.phone}</p><button onClick={() => showToast(`Message sent to ${t.name}`)} className="btn-press mt-3 bg-primary text-white px-3 py-1.5 text-[12px] w-full">Send Message</button></div>)}</div></div>
-          )}
-
-          {section === "Attendance" && (
-            <div className="bg-white border border-border p-4 shadow-sm animate-slide-up"><h2 className="font-semibold text-[16px]">Mark Attendance - Today</h2><p className="text-[12px] text-muted mt-1">Date: 12 Nov 2026 - Select status for each student</p>{students.map(s => <div key={s.id} className="flex justify-between items-center py-3 border-b border-border/60"><span className="text-[13px]">{s.name} - {s.class}</span><div className="flex gap-2">{["Present", "Absent", "Late"].map(st => <button key={st} onClick={() => { setAttendance({ ...attendance, [s.id]: st }); showToast(`${s.name} marked as ${st}`); }} className={`btn-press px-3 py-1 text-[12px] border ${attendance[s.id] === st ? "bg-primary text-white border-primary" : "bg-white border-border"}`}>{st}</button>)}</div></div>)}<button onClick={() => showToast("Attendance saved successfully")} className="btn-press mt-4 bg-teal text-white px-4 py-2 text-[13px] w-full">Save Attendance</button></div>
-          )}
-
-          {section === "Fees" && (
-            <div className="bg-white border border-border p-4 shadow-sm animate-slide-up"><h2 className="font-semibold text-[16px]">Fee Management</h2><p className="text-[13px] text-muted mt-1">Collected: {paidCount} | Pending: {students.length - paidCount} | Monthly Fee: Rs. 5,000</p>{students.map(s => <div key={s.id} className="flex justify-between items-center py-3 border-b border-border/60"><span className="text-[13px]">{s.name} - {s.class}</span><button onClick={() => collectFee(s.id)} className={`btn-press px-3 py-1 text-[12px] ${s.fee === "Paid" ? "bg-green-50 text-success border border-green-200" : "bg-primary text-white"}`}>{s.fee === "Paid" ? "Paid" : "Collect Now"}</button></div>)}</div>
-          )}
-
-          {["Examinations", "Timetable", "Library", "Transport", "Settings", "Reports", "Hostel"].includes(section) && (
-            <div className="bg-white border border-border p-10 text-center shadow-sm animate-slide-up"><h2 className="font-semibold text-[18px]">{section}</h2><p className="text-muted text-[13px] mt-1">{section} module is ready. Total Students: {students.length}, Teachers: {teachers.length}</p><div className="flex gap-2 justify-center mt-4"><button onClick={() => setSection("Dashboard")} className="btn-press bg-primary text-white px-4 py-2 text-[13px]">Back to Dashboard</button><button onClick={() => showToast(`${section} exported as PDF`)} className="btn-press border border-border px-4 py-2 text-[13px] bg-white">Export PDF</button></div></div>
-          )}
+const App: React.FC = () => {
+  const [collapsed, setCollapsed] = useState(false);
+  const [dialog, setDialog] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState(false);
+  const openDialog = (title: string) => { setSubmitted(false); setDialog(title); };
+  return <div className="min-h-screen bg-background text-on-surface">
+    <Sidebar collapsed={collapsed} onToggle={() => setCollapsed(v => !v)} />
+    <Topbar collapsed={collapsed} onAction={openDialog} />
+    <main className={`${collapsed ? 'ml-[76px]' : 'ml-[250px]'} min-h-screen pt-16 transition-all duration-200`}><div className="p-6 max-w-[1800px] mx-auto"><DashboardPage onAction={openDialog} /></div></main>
+    {dialog && <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/40 p-4" onMouseDown={e => { if (e.target === e.currentTarget) setDialog(null); }}>
+      <section role="dialog" aria-modal="true" aria-labelledby="dialog-title" className="w-full max-w-lg rounded-2xl bg-white shadow-2xl border border-outline-variant/40 overflow-hidden">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-outline-variant/30"><div><h2 id="dialog-title" className="text-lg font-bold text-on-surface">{dialog}</h2><p className="text-xs text-on-surface-variant mt-0.5">VLearnings School Management System</p></div><button aria-label="Close" onClick={() => setDialog(null)} className="p-2 rounded-lg hover:bg-surface-container-low text-on-surface-variant"><span className="material-symbols-outlined">close</span></button></div>
+        <div className="p-5 space-y-4">
+          {submitted ? <div className="rounded-xl bg-secondary-container/40 p-4 text-sm text-on-secondary-container"><span className="material-symbols-outlined align-middle mr-2">check_circle</span>Action completed in this demo interface. No backend record was changed.</div> : <>
+            <p className="text-sm text-on-surface-variant">This interactive preview opens the {dialog.toLowerCase()} workspace. Enter details below to test the interface.</p>
+            {['Add Student','Add New Student','Add Teacher','Record Attendance','Collect Fee','Add Event'].includes(dialog) ? <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <label className="text-xs font-semibold text-on-surface-variant">Name / Reference<input className="mt-1 w-full rounded-lg border border-outline-variant p-2.5 text-sm font-normal text-on-surface outline-none focus:border-primary" placeholder="Enter name" /></label>
+              <label className="text-xs font-semibold text-on-surface-variant">Class / Category<input className="mt-1 w-full rounded-lg border border-outline-variant p-2.5 text-sm font-normal text-on-surface outline-none focus:border-primary" placeholder="Select or enter" /></label>
+              <label className="text-xs font-semibold text-on-surface-variant sm:col-span-2">Notes<textarea className="mt-1 w-full rounded-lg border border-outline-variant p-2.5 text-sm font-normal text-on-surface outline-none focus:border-primary" rows={3} placeholder="Additional details (optional)" /></label>
+            </div> : <div className="rounded-xl bg-surface-container-low p-4 text-sm text-on-surface-variant">{dialog.includes('Search') ? 'Search is ready. Connect your student, staff and finance APIs to display live matching records.' : dialog === 'Notifications' ? 'You are all caught up. New admission, fee and attendance notifications will appear here.' : dialog === 'Help & Support' ? 'Help centre preview: use the sidebar to navigate modules or contact your system administrator.' : dialog === 'Generate Report' ? 'Choose a report format and date range in the full reporting module.' : 'This section is available as an interactive UI preview. Connect the relevant module API to load live records.'}</div>}
+          </>}
         </div>
+        <div className="flex justify-end gap-2 px-5 py-4 bg-surface-container-low/60 border-t border-outline-variant/30"><button onClick={() => setDialog(null)} className="px-4 py-2 rounded-lg border border-outline-variant text-sm font-medium hover:bg-white">Close</button>{!submitted && <button onClick={() => setSubmitted(true)} className="px-4 py-2 rounded-lg bg-primary-container text-white text-sm font-semibold hover:bg-primary">{['Add Student','Add New Student','Add Teacher','Record Attendance','Collect Fee','Add Event'].includes(dialog) ? 'Save Demo' : 'Done'}</button>}</div>
+      </section>
+    </div>}
+  </div>;
+};
+export default App;
 
-        {showAdd && <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 animate-fade"><div className="bg-white p-6 w-[380px] shadow-lg animate-slide-up"><h3 className="font-semibold text-[16px]">Add New Student</h3><input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Full Name" className="w-full border border-border px-3 py-2 mt-3 text-[13px] outline-none focus:border-primary" /><input value={form.roll} onChange={e => setForm({ ...form, roll: e.target.value })} placeholder="Roll No e.g VL-105" className="w-full border border-border px-3 py-2 mt-2 text-[13px] outline-none focus:border-primary" /><input value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} placeholder="Phone Number" className="w-full border border-border px-3 py-2 mt-2 text-[13px] outline-none focus:border-primary" /><select value={form.class} onChange={e => setForm({ ...form, class: e.target.value })} className="w-full border border-border px-3 py-2 mt-2 text-[13px]">{["Class 8-C", "Class 9-B", "Class 10-A"].map(c => <option key={c}>{c}</option>)}</select><div className="flex gap-2 mt-4"><button onClick={addStudent} className="btn-press flex-1 bg-primary text-white py-2 text-[13px]">Save Student</button><button onClick={() => setShowAdd(false)} className="btn-press flex-1 border border-border py-2 text-[13px]">Cancel</button></div></div></div>}
-      </div>
-    </div>
-  );
-}
