@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface SidebarProps { collapsed: boolean; onToggle: () => void; }
+interface SidebarProps { collapsed: boolean; onToggle: () => void; activeItem: string; onNavigate: (item: string) => void; activeStudentTab: string; }
 const groups = [
   { title: 'Main Menu', items: [['grid_view','Dashboard'],['group','Students'],['how_to_reg','Admissions'],['menu_book','Academics'],['fact_check','Attendance'],['account_balance_wallet','Fees & Accounts'],['assignment','Examinations']] },
   { title: 'Management', items: [['badge','Teachers & Staff'],['payments','HR & Payroll'],['local_library','Library'],['directions_bus','Transport'],['apartment','Hostel']] },
@@ -13,7 +13,10 @@ const groups = [
   ],
 },
 ];
-export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => (
+export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle, activeItem, onNavigate, activeStudentTab }) => {
+  const [studentsExpanded, setStudentsExpanded] = React.useState(activeItem === 'Students');
+  const [feesExpanded, setFeesExpanded] = React.useState(activeItem === 'Fees & Accounts');
+  return (
   <aside className={`fixed left-0 top-0 h-full ${collapsed ? 'w-[76px]' : 'w-[250px]'} bg-surface-container-lowest border-r border-outline-variant/30 z-50 flex flex-col justify-between select-none transition-all duration-200`}>
     <div className="flex flex-col h-[calc(100%-80px)] min-h-0">
       <div className={`h-16 ${collapsed ? 'px-3 justify-center' : 'px-4 justify-between'} border-b border-outline-variant/30 flex items-center shrink-0`}>
@@ -26,13 +29,26 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => (
       <div className="overflow-y-auto px-2 py-4 space-y-4 flex-1">
         {groups.map(group => <div className="space-y-1" key={group.title}>
           {!collapsed && <div className="px-2 text-xs uppercase tracking-wider text-on-surface-variant font-semibold">{group.title}</div>}
-          <nav className="space-y-1" aria-label={group.title}>{group.items.map(([icon,label]) => <button
-            type="button"
-            key={label}
-            title={collapsed ? label : undefined}
-            aria-current={label === 'Dashboard' ? 'page' : undefined}
-            className={`w-full flex items-center ${collapsed ? 'justify-center px-2' : 'gap-2 px-3'} py-2 rounded-lg ${label === 'Dashboard' ? 'bg-primary-fixed text-primary font-semibold' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface'} transition-colors text-sm`}
-          ><span className="material-symbols-outlined text-[20px]">{icon}</span>{!collapsed && <span>{label}</span>}</button>)}</nav>
+          <nav className="space-y-1" aria-label={group.title}>{group.items.map(([icon,label]) => <React.Fragment key={label}>
+            <button
+              type="button"
+              title={collapsed ? label : undefined}
+              onClick={() => { if (label === "Students") { setStudentsExpanded(activeItem !== "Students" ? true : !studentsExpanded); onNavigate(label); } else if (label === "Fees & Accounts") { setFeesExpanded(activeItem !== "Fees & Accounts" ? true : !feesExpanded); onNavigate(label); } else { onNavigate(label); } }}
+              aria-current={label === activeItem ? 'page' : undefined}
+              className={`w-full flex items-center ${collapsed ? 'justify-center px-2' : 'gap-2 px-3'} py-2 rounded-lg ${label === activeItem ? 'bg-primary-fixed text-primary font-semibold' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface'} transition-colors text-sm`}
+            ><span className="material-symbols-outlined text-[20px]">{icon}</span>{!collapsed && <><span>{label}</span>{label === "Students" && <span className="material-symbols-outlined ml-auto text-[18px]">{studentsExpanded ? "expand_less" : "expand_more"}</span>}{label === "Fees & Accounts" && <span className="material-symbols-outlined ml-auto text-[18px]">{feesExpanded ? "expand_less" : "expand_more"}</span>}</>}</button>
+            {label === 'Fees & Accounts' && feesExpanded && !collapsed && <div className="ml-8 mt-1 space-y-1 border-l border-outline-variant/40 pl-3">
+              {['Overview', 'Fee Structures', 'Fee Challans', 'Collect Fees', 'Discounts & Scholarships', 'Financial Reports'].map(tab => <button type="button" key={tab} onClick={() => onNavigate(`FeesTab:${tab}`)} className="block w-full rounded-lg px-3 py-2 text-left text-xs transition-colors text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface">{tab}</button>)}
+            </div>}
+            {label === 'Students' && studentsExpanded && !collapsed && <div className="ml-8 mt-1 space-y-1 border-l border-outline-variant/40 pl-3">
+              {['Overview', 'Students', 'Admissions', 'Attendance', 'Academic Records', 'ID Cards'].map(tab => <button
+                type="button"
+                key={tab}
+                onClick={() => onNavigate(`StudentTab:${tab}`)}
+                className={`block w-full rounded-lg px-3 py-2 text-left text-xs transition-colors ${activeStudentTab === tab ? 'bg-primary-fixed text-primary font-semibold' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface'}`}
+              >{tab}</button>)}
+            </div>}
+          </React.Fragment>)}</nav>
         </div>)}
       </div>
     </div>
@@ -42,3 +58,4 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => (
     </div>
   </aside>
 );
+};
