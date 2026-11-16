@@ -2,16 +2,18 @@ import React, { useState } from 'react';
 import { Sidebar } from './components/layout/Sidebar';
 import { Topbar } from './components/layout/Topbar';
 import { DashboardPage } from './modules/dashboard/pages/DashboardPage';
+import { AdmissionsPage } from './modules/admissions/pages/AdmissionsPage';
 
 const App: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [dialog, setDialog] = useState<string | null>(null);
+  const [activePage, setActivePage] = useState('Dashboard');
   const [submitted, setSubmitted] = useState(false);
   const openDialog = (title: string) => { setSubmitted(false); setDialog(title); };
   return <div className="min-h-screen bg-background text-on-surface">
-    <Sidebar collapsed={collapsed} onToggle={() => setCollapsed(v => !v)} />
+    <Sidebar collapsed={collapsed} onToggle={() => setCollapsed(v => !v)} activePage={activePage} onNavigate={setActivePage} />
     <Topbar collapsed={collapsed} onAction={openDialog} />
-    <main className={`${collapsed ? 'ml-[76px]' : 'ml-[250px]'} min-h-screen pt-16 transition-all duration-200`}><div className="p-6 max-w-[1800px] mx-auto"><DashboardPage onAction={openDialog} /></div></main>
+    <main className={`${collapsed ? 'ml-[76px]' : 'ml-[250px]'} min-h-screen pt-16 transition-all duration-200`}><div className="p-6 max-w-[1800px] mx-auto">{activePage === 'Admissions' ? <AdmissionsPage /> : activePage === 'Dashboard' ? <DashboardPage onAction={openDialog} /> : <section className="bg-white rounded-xl border border-outline-variant/40 p-8 shadow-sm"><h1 className="text-2xl font-bold text-on-surface">{activePage}</h1><p className="mt-2 text-sm text-on-surface-variant">This module is not part of the current admissions implementation.</p><button onClick={() => setActivePage('Admissions')} className="mt-5 px-4 py-2 rounded-lg bg-primary-container text-white text-sm font-semibold">Open Admissions</button></section>}</div></main>
     {dialog && <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/40 p-4" onMouseDown={e => { if (e.target === e.currentTarget) setDialog(null); }}>
       <section role="dialog" aria-modal="true" aria-labelledby="dialog-title" className="w-full max-w-lg rounded-2xl bg-white shadow-2xl border border-outline-variant/40 overflow-hidden">
         <div className="flex items-center justify-between px-5 py-4 border-b border-outline-variant/30"><div><h2 id="dialog-title" className="text-lg font-bold text-on-surface">{dialog}</h2><p className="text-xs text-on-surface-variant mt-0.5">VLearnings School Management System</p></div><button aria-label="Close" onClick={() => setDialog(null)} className="p-2 rounded-lg hover:bg-surface-container-low text-on-surface-variant"><span className="material-symbols-outlined">close</span></button></div>
