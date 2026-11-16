@@ -11,6 +11,7 @@ const App: React.FC = () => {
   const [studentTab, setStudentTab] = useState('Overview');
   const [feesTab, setFeesTab] = useState<Tab>('Overview');
   const [dialog, setDialog] = useState<string | null>(null);
+  const [activePage, setActivePage] = useState('Dashboard');
   const [submitted, setSubmitted] = useState(false);
   const openDialog = (title: string) => { setSubmitted(false); setDialog(title); };
   return <div className="min-h-screen bg-background text-on-surface">

@@ -1,10 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 interface SidebarProps { collapsed: boolean; onToggle: () => void; activeItem: string; onNavigate: (item: string) => void; activeStudentTab: string; }
 const groups = [
   { title: 'Main Menu', items: [['grid_view','Dashboard'],['group','Students'],['how_to_reg','Admissions'],['menu_book','Academics'],['fact_check','Attendance'],['account_balance_wallet','Fees & Accounts'],['assignment','Examinations']] },
   { title: 'Management', items: [['badge','Teachers & Staff'],['payments','HR & Payroll'],['local_library','Library'],['directions_bus','Transport'],['apartment','Hostel']] },
   {
+    title: 'Management',
+    items: [
+      ['badge', 'Teachers & Staff'],
+      ['payments', 'HR & Payroll'],
+      ['local_library', 'Library'],
+      ['directions_bus', 'Transport'],
+      ['apartment', 'Hostel'],
+    ],
+  },
+];
+
+const systemGroup = {
   title: 'System',
   items: [
     ['analytics', 'Reports & Analytics'],
