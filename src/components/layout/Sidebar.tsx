@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface SidebarProps { collapsed: boolean; onToggle: () => void; }
+interface SidebarProps { collapsed: boolean; onToggle: () => void; activePage: string; onNavigate: (page: string) => void; }
 const groups = [
   { title: 'Main Menu', items: [['grid_view','Dashboard'],['group','Students'],['how_to_reg','Admissions'],['menu_book','Academics'],['fact_check','Attendance'],['account_balance_wallet','Fees & Accounts'],['assignment','Examinations']] },
   { title: 'Management', items: [['badge','Teachers & Staff'],['payments','HR & Payroll'],['local_library','Library'],['directions_bus','Transport'],['apartment','Hostel']] },
@@ -13,7 +13,7 @@ const groups = [
   ],
 },
 ];
-export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => (
+export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle, activePage, onNavigate }) => (
   <aside className={`fixed left-0 top-0 h-full ${collapsed ? 'w-[76px]' : 'w-[250px]'} bg-surface-container-lowest border-r border-outline-variant/30 z-50 flex flex-col justify-between select-none transition-all duration-200`}>
     <div className="flex flex-col h-[calc(100%-80px)] min-h-0">
       <div className={`h-16 ${collapsed ? 'px-3 justify-center' : 'px-4 justify-between'} border-b border-outline-variant/30 flex items-center shrink-0`}>
@@ -30,8 +30,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => (
             type="button"
             key={label}
             title={collapsed ? label : undefined}
-            aria-current={label === 'Dashboard' ? 'page' : undefined}
-            className={`w-full flex items-center ${collapsed ? 'justify-center px-2' : 'gap-2 px-3'} py-2 rounded-lg ${label === 'Dashboard' ? 'bg-primary-fixed text-primary font-semibold' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface'} transition-colors text-sm`}
+            aria-current={label === activePage ? 'page' : undefined}
+            onClick={() => onNavigate(label)}
+            className={`w-full flex items-center ${collapsed ? 'justify-center px-2' : 'gap-2 px-3'} py-2 rounded-lg ${label === activePage ? 'bg-primary-fixed text-primary font-semibold' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface'} transition-colors text-sm`}
           ><span className="material-symbols-outlined text-[20px]">{icon}</span>{!collapsed && <span>{label}</span>}</button>)}</nav>
         </div>)}
       </div>
