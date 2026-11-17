@@ -1,6 +1,8 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom"
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import AppLayout from "./components/layout/AppLayout"
+import ProtectedRoute from "./auth/ProtectedRoute"
 import Dashboard from "./pages/Dashboard"
+import Students from "./pages/Students"
 import Login from "./pages/Login"
 import Signup from "./pages/Signup"
 
@@ -14,7 +16,6 @@ function Page({ title }: { title: string }) {
 }
 
 const pages = [
-  { path: "/students", title: "Students" },
   { path: "/admissions", title: "Admissions" },
   { path: "/academics", title: "Academics" },
   { path: "/attendance", title: "Attendance" },
@@ -36,12 +37,18 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route element={<AppLayout />}>
-          <Route path="/" element={<Dashboard />} />
-          {pages.map((p) => (
-            <Route key={p.path} path={p.path} element={<Page title={p.title} />} />
-          ))}
+
+        <Route element={<ProtectedRoute />}>
+          <Route element={<AppLayout />}>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/students" element={<Students />} />
+            {pages.map((p) => (
+              <Route key={p.path} path={p.path} element={<Page title={p.title} />} />
+            ))}
+          </Route>
         </Route>
+
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   )
