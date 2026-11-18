@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 
 interface SidebarProps {
   collapsed: boolean;
@@ -7,6 +7,7 @@ interface SidebarProps {
   onNavigate: (item: string) => void;
   activeStudentTab: string;
   activeFeesTab: string;
+  activeAcademicTab: string;
 }
 
 type MenuItem = [string, string];
@@ -19,7 +20,7 @@ const groups: MenuGroup[] = [
       ['grid_view', 'Dashboard'],
       ['group', 'Students'],
       ['how_to_reg', 'Admissions'],
-      ['menu_book', 'Academics'],
+      ['menu_book', 'Academics & Timetable'],
       ['fact_check', 'Attendance'],
       ['account_balance_wallet', 'Fees & Accounts'],
       ['assignment', 'Examinations'],
@@ -49,7 +50,7 @@ const dropdownItems: Record<string, string[]> = {
   Students: ['Overview', 'Students', 'Admissions', 'Attendance', 'Academic Records', 'ID Cards'],
   Admissions: ['Applications', 'Entrance Tests', 'Merit List', 'Fee Challans'],
   'Fees & Accounts': ['Overview', 'Fee Structures', 'Fee Challans', 'Collect Fees', 'Discounts & Scholarships', 'Financial Reports'],
-  Examinations: ['Overview', 'Examination Management', 'Exam Timetable', 'Exam Attendance', 'Marks Entry', 'Marks Approval', 'Results & Grading', 'Report Cards', 'Reports & Analytics', 'Examination Settings'],
+  'Academics & Timetable': ['Overview', 'Class Scheduling & Timetable', 'Subject & Teacher Assignment', 'Course Outlines & Syllabi', 'Substitute Teachers', 'Academic Calendar'],
 };
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -59,12 +60,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onNavigate,
   activeStudentTab,
   activeFeesTab,
+  activeAcademicTab,
 }) => {
   const [expandedMenu, setExpandedMenu] = useState<string | null>(() => {
     if (['Applications', 'Entrance Tests', 'Merit List', 'Fee Challans'].includes(activeItem)) return 'Admissions';
     if (activeItem === 'Students') return 'Students';
     if (activeItem === 'Fees & Accounts') return 'Fees & Accounts';
-    if (activeItem === 'Examinations' || dropdownItems.Examinations.includes(activeItem)) return 'Examinations';
+    if (activeItem === 'Academics & Timetable') return 'Academics & Timetable';
     return null;
   });
 
@@ -82,7 +84,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       if (label === 'Students') onNavigate('Students');
       else if (label === 'Admissions') onNavigate('Applications');
       else if (label === 'Fees & Accounts') onNavigate('Fees & Accounts');
-      else if (label === 'Examinations') onNavigate('Examinations');
+      else if (label === 'Academics & Timetable') onNavigate('Academics & Timetable');
       return;
     }
     setExpandedMenu((current) => (current === label ? null : label));
@@ -93,7 +95,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     setExpandedMenu(parent);
     if (parent === 'Students') onNavigate(`StudentTab:${item}`);
     else if (parent === 'Fees & Accounts') onNavigate(`FeesTab:${item}`);
-    else if (parent === 'Examinations') onNavigate(item === 'Overview' ? 'Examinations' : `ExaminationTab:${item}`);
+    else if (parent === 'Academics & Timetable') onNavigate(`AcademicTab:${item}`);
     else onNavigate(item);
   };
 
@@ -137,7 +139,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     {dropdownItems[label].map((item) => {
                       const selected = label === 'Students' ? activeItem === 'Students' && activeStudentTab === item
                         : label === 'Fees & Accounts' ? activeItem === 'Fees & Accounts' && activeFeesTab === item
-                        : label === 'Examinations' ? activeItem === item || (activeItem === 'Examinations' && item === 'Overview')
+                        : label === 'Academics & Timetable' ? activeItem === 'Academics & Timetable' && activeAcademicTab === item
                         : activeItem === item;
                       return <button
                         key={item}
@@ -162,3 +164,5 @@ export const Sidebar: React.FC<SidebarProps> = ({
     </aside>
   );
 };
+
+
