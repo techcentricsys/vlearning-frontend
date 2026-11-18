@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import type { AuthUser } from '../../auth';
 
 interface SidebarProps {
   collapsed: boolean;
@@ -7,6 +8,8 @@ interface SidebarProps {
   onNavigate: (item: string) => void;
   activeStudentTab: string;
   activeFeesTab: string;
+  currentUser: Omit<AuthUser, 'password'> | null;
+  onSignOut: () => void;
 }
 
 type MenuItem = [string, string];
@@ -28,6 +31,7 @@ const groups: MenuGroup[] = [
   {
     title: 'Management',
     items: [
+      ['family_restroom', 'Parent & Guardian'],
       ['badge', 'Teachers & Staff'],
       ['payments', 'HR & Payroll'],
       ['local_library', 'Library'],
@@ -47,6 +51,7 @@ const groups: MenuGroup[] = [
 
 const dropdownItems: Record<string, string[]> = {
   Students: ['Overview', 'Students', 'Admissions', 'Attendance', 'Academic Records', 'ID Cards'],
+  'Parent & Guardian': ['Parent Overview', 'Parent Directory', 'Student Relationships', 'Portal Accounts', 'Communication', 'Parent Reports & Analytics'],
   Admissions: ['Applications', 'Entrance Tests', 'Merit List', 'Fee Challans'],
   'Fees & Accounts': ['Overview', 'Fee Structures', 'Fee Challans', 'Collect Fees', 'Discounts & Scholarships', 'Financial Reports'],
   Examinations: ['Overview', 'Examination Management', 'Exam Timetable', 'Exam Attendance', 'Marks Entry', 'Marks Approval', 'Results & Grading', 'Report Cards', 'Reports & Analytics', 'Examination Settings'],
@@ -59,6 +64,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onNavigate,
   activeStudentTab,
   activeFeesTab,
+  currentUser,
+  onSignOut,
 }) => {
   const [expandedMenu, setExpandedMenu] = useState<string | null>(() => {
     if (['Applications', 'Entrance Tests', 'Merit List', 'Fee Challans'].includes(activeItem)) return 'Admissions';
@@ -81,6 +88,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     if (collapsed) {
       if (label === 'Students') onNavigate('Students');
       else if (label === 'Admissions') onNavigate('Applications');
+      else if (label === 'Parent & Guardian') onNavigate('Parent Overview');
       else if (label === 'Fees & Accounts') onNavigate('Fees & Accounts');
       else if (label === 'Examinations') onNavigate('Examinations');
       return;
@@ -155,9 +163,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
       </div>
 
-      <div className={`h-20 ${collapsed ? 'px-2 justify-center' : 'px-3 justify-between'} border-t border-outline-variant/30 flex items-center bg-surface-container-low/50`}>
-        <div className="flex items-center gap-2 min-w-0"><div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center shrink-0"><span className="material-symbols-outlined text-on-primary text-[18px]">person</span></div>{!collapsed && <div className="flex flex-col min-w-0"><span className="text-sm font-semibold text-on-surface truncate">Dr. Sarah Jenkins</span><span className="text-[11px] text-on-surface-variant truncate">Super Admin</span></div>}</div>
-        {collapsed && <button type="button" title="Expand sidebar" aria-label="Expand sidebar" onClick={onToggle} className="absolute left-[54px] bottom-[88px] bg-surface-container-lowest border rounded-full shadow p-1 text-on-surface-variant"><span className="material-symbols-outlined text-[18px]">chevron_right</span></button>}
+      <div className="shrink-0 border-t border-outline-variant/30 bg-surface-container-low/50 p-3 space-y-2">
+        <div className={`flex items-center gap-2 min-w-0 ${collapsed ? 'justify-center' : ''}`}><div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center shrink-0"><span className="material-symbols-outlined text-on-primary text-[18px]">person</span></div>{!collapsed && <div className="flex flex-col min-w-0"><span className="text-sm font-semibold text-on-surface truncate">{currentUser?.name || 'User'}</span><span className="text-[11px] text-on-surface-variant truncate">{currentUser?.role || 'School Administrator'}</span></div>}</div>
+        <button type="button" title="Sign out" onClick={onSignOut} className={`w-full flex items-center ${collapsed ? 'justify-center' : 'gap-2 px-3'} py-2 rounded-lg text-sm font-semibold text-on-surface-variant hover:bg-surface-container-low hover:text-primary transition-colors`}><span className="material-symbols-outlined text-[20px]">logout</span>{!collapsed && <span>Sign out</span>}</button>
+        {collapsed && <button type="button" title="Expand sidebar" aria-label="Expand sidebar" onClick={onToggle} className="absolute left-[54px] bottom-[110px] bg-surface-container-lowest border rounded-full shadow p-1 text-on-surface-variant"><span className="material-symbols-outlined text-[18px]">chevron_right</span></button>}
       </div>
     </aside>
   );

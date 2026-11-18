@@ -6,15 +6,28 @@ import StudentModule from './components/StudentModule';
 import FeesModule, { type Tab } from './components/FeesModule';
 import { AdmissionsPage } from './modules/admissions/pages/AdmissionsPage';
 import ExaminationsPage from './modules/examinations/pages/ExaminationsPage';
+import ParentGuardianPage from './modules/parents/pages/ParentGuardianPage';
+import Login from './components/Login';
+import Register from './components/Register';
+import { ensureDefaultAdmin, getSession, logout } from './auth';
+import { useEffect } from 'react';
 
 const App: React.FC = () => {
+  const [authPage, setAuthPage] = useState<'login' | 'register' | 'app'>(() => getSession() ? 'app' : 'login');
+  const [currentUser, setCurrentUser] = useState(() => getSession());
+  useEffect(() => { ensureDefaultAdmin(); }, []);
+  const enterDashboard = () => { setCurrentUser(getSession()); setAuthPage('app'); };
+  const signOut = () => { logout(); setCurrentUser(null); setActivePage('Dashboard'); setAuthPage('login'); };
   const [collapsed, setCollapsed] = useState(false);
   const [activePage, setActivePage] = useState('Dashboard');
   const [studentTab, setStudentTab] = useState('Overview');
   const [feesTab, setFeesTab] = useState<Tab>('Overview');
+  const [parentModuleActive, setParentModuleActive] = useState(false);
   const [dialog, setDialog] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const openDialog = (title: string) => { setSubmitted(false); setDialog(title); };
+  if (authPage === 'login') return <Login goRegister={() => setAuthPage('register')} goDashboard={enterDashboard} />;
+  if (authPage === 'register') return <Register goLogin={() => setAuthPage('login')} goDashboard={enterDashboard} />;
   return <div className="min-h-screen bg-background text-on-surface">
     <Sidebar
       collapsed={collapsed}
@@ -22,19 +35,22 @@ const App: React.FC = () => {
       activeItem={activePage}
       activeStudentTab={studentTab}
       activeFeesTab={feesTab}
+      currentUser={currentUser}
+      onSignOut={signOut}
       onNavigate={(item) => {
-        if (item === 'Dashboard') setActivePage('Dashboard');
-        else if (item === 'Students') { setActivePage('Students'); setStudentTab('Overview'); }
-        else if (item === 'Fees & Accounts') { setActivePage('Fees & Accounts'); setFeesTab('Overview'); }
-        else if (item === 'Examinations') setActivePage('Examinations');
-        else if (item.startsWith('ExaminationTab:')) setActivePage(item.slice(15));
-        else if (item.startsWith('StudentTab:')) { setActivePage('Students'); setStudentTab(item.slice(11)); }
-        else if (item.startsWith('FeesTab:')) { setActivePage('Fees & Accounts'); setFeesTab(item.slice(8) as Tab); }
-        else setActivePage(item);
+        if (item === 'Dashboard') { setParentModuleActive(false); setActivePage('Dashboard'); }
+        else if (['Parent Overview','Parent Directory','Student Relationships','Portal Accounts','Communication','Parent Reports & Analytics'].includes(item)) { setParentModuleActive(true); setActivePage(item); }
+        else if (item === 'Students') { setParentModuleActive(false); setActivePage('Students'); setStudentTab('Overview'); }
+        else if (item === 'Fees & Accounts') { setParentModuleActive(false); setActivePage('Fees & Accounts'); setFeesTab('Overview'); }
+        else if (item === 'Examinations') { setParentModuleActive(false); setActivePage('Examinations'); }
+        else if (item.startsWith('ExaminationTab:')) { setParentModuleActive(false); setActivePage(item.slice(15)); }
+        else if (item.startsWith('StudentTab:')) { setParentModuleActive(false); setActivePage('Students'); setStudentTab(item.slice(11)); }
+        else if (item.startsWith('FeesTab:')) { setParentModuleActive(false); setActivePage('Fees & Accounts'); setFeesTab(item.slice(8) as Tab); }
+        else { setParentModuleActive(false); setActivePage(item); }
       }}
     />
     <Topbar collapsed={collapsed} onAction={openDialog} />
-    <main className={`${collapsed ? 'ml-[76px]' : 'ml-[250px]'} min-h-screen pt-16 transition-all duration-200`}><div className="p-6 max-w-[1800px] mx-auto">{activePage === 'Students' ? <StudentModule initialTab={studentTab} onBack={() => setStudentTab("Overview")} /> : activePage === 'Fees & Accounts' ? <FeesModule initialTab={feesTab} /> : ['Applications','Entrance Tests','Merit List','Fee Challans'].includes(activePage) ? <AdmissionsPage section={activePage as 'Applications'|'Entrance Tests'|'Merit List'|'Fee Challans'} onNavigate={setActivePage} /> : ['Examinations','Examination Management','Exam Timetable','Exam Attendance','Marks Entry','Marks Approval','Results & Grading','Report Cards','Reports & Analytics','Examination Settings'].includes(activePage) ? <ExaminationsPage initialSection={activePage === 'Examinations' ? 'Overview' : activePage as 'Examination Management'|'Exam Timetable'|'Exam Attendance'|'Marks Entry'|'Marks Approval'|'Results & Grading'|'Report Cards'|'Reports & Analytics'|'Examination Settings'} /> : activePage === 'Dashboard' ? <DashboardPage onAction={openDialog} /> : <section className="min-h-[420px] bg-white rounded-xl border border-outline-variant/40 p-8 shadow-sm flex flex-col items-center justify-center text-center"><div className="w-16 h-16 rounded-2xl bg-surface-container-low flex items-center justify-center mb-5"><span className="material-symbols-outlined text-3xl text-on-surface-variant">construction</span></div><h1 className="text-2xl font-bold text-on-surface">{activePage}</h1><p className="mt-2 text-sm font-medium text-on-surface-variant">Under Development</p><p className="mt-1 text-sm text-on-surface-variant">This page is currently being developed and will be available soon.</p></section>}</div></main>
+    <main className={`${collapsed ? 'ml-[76px]' : 'ml-[250px]'} min-h-screen pt-16 transition-all duration-200`}><div className="p-6 max-w-[1800px] mx-auto">{activePage === 'Students' ? <StudentModule initialTab={studentTab} onBack={() => setStudentTab("Overview")} /> : activePage === 'Fees & Accounts' ? <FeesModule initialTab={feesTab} /> : ['Applications','Entrance Tests','Merit List','Fee Challans'].includes(activePage) ? <AdmissionsPage section={activePage as 'Applications'|'Entrance Tests'|'Merit List'|'Fee Challans'} onNavigate={setActivePage} /> : ['Examinations','Examination Management','Exam Timetable','Exam Attendance','Marks Entry','Marks Approval','Results & Grading','Report Cards','Reports & Analytics','Examination Settings'].includes(activePage) ? <ExaminationsPage initialSection={activePage === 'Examinations' ? 'Overview' : activePage as 'Examination Management'|'Exam Timetable'|'Exam Attendance'|'Marks Entry'|'Marks Approval'|'Results & Grading'|'Report Cards'|'Reports & Analytics'|'Examination Settings'} /> : activePage === 'Dashboard' ? <DashboardPage onAction={openDialog} /> : parentModuleActive ? <ParentGuardianPage initialSection={activePage === 'Parent Overview' ? 'Overview' : activePage === 'Parent Reports & Analytics' ? 'Reports & Analytics' : activePage} /> : <section className="min-h-[420px] bg-white rounded-xl border border-outline-variant/40 p-8 shadow-sm flex flex-col items-center justify-center text-center"><div className="w-16 h-16 rounded-2xl bg-surface-container-low flex items-center justify-center mb-5"><span className="material-symbols-outlined text-3xl text-on-surface-variant">construction</span></div><h1 className="text-2xl font-bold text-on-surface">{activePage}</h1><p className="mt-2 text-sm font-medium text-on-surface-variant">Under Development</p><p className="mt-1 text-sm text-on-surface-variant">This page is currently being developed and will be available soon.</p></section>}</div></main>
     {dialog && <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/40 p-4" onMouseDown={e => { if (e.target === e.currentTarget) setDialog(null); }}>
       <section role="dialog" aria-modal="true" aria-labelledby="dialog-title" className="w-full max-w-lg rounded-2xl bg-white shadow-2xl border border-outline-variant/40 overflow-hidden">
         <div className="flex items-center justify-between px-5 py-4 border-b border-outline-variant/30"><div><h2 id="dialog-title" className="text-lg font-bold text-on-surface">{dialog}</h2><p className="text-xs text-on-surface-variant mt-0.5">VLearnings School Management System</p></div><button aria-label="Close" onClick={() => setDialog(null)} className="p-2 rounded-lg hover:bg-surface-container-low text-on-surface-variant"><span className="material-symbols-outlined">close</span></button></div>
