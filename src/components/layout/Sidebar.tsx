@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import type { AuthUser } from '../../auth';
-﻿import React, { useEffect, useState } from 'react';
 
 interface SidebarProps {
   collapsed: boolean;
@@ -174,5 +173,3 @@ export const Sidebar: React.FC<SidebarProps> = ({
     </aside>
   );
 };
-
-
