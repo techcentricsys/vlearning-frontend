@@ -1,77 +1,46 @@
-import { useState } from "react";
+import { useState, type FormEvent } from 'react';
+import { ArrowRight, Building2, CircleHelp, Eye, EyeOff, GraduationCap, LockKeyhole, Mail, ShieldCheck, Users, Activity, Landmark } from 'lucide-react';
+import { authenticate, DEFAULT_ADMIN, DEFAULT_GUARDIAN } from '../auth';
+import './Auth.css';
 
-export default function Login({ goRegister, goDashboard }: any) {
-  const [email, setEmail] = useState("admin@vlearnings.edu");
-  const [password, setPassword] = useState("admin123");
-  const [showPass, setShowPass] = useState(false);
+type Props = { goRegister: () => void; goDashboard: () => void };
+export default function Login({ goRegister, goDashboard }: Props) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [remember, setRemember] = useState(true);
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  const handleLogin = () => {
-    if (!email || !password) { setError("Please enter email and password"); return; }
-    setLoading(true); setError("");
-    setTimeout(() => { setLoading(false); goDashboard(); }, 800);
+  const fillAdmin = () => { setEmail(DEFAULT_ADMIN.email); setPassword(DEFAULT_ADMIN.password); setError(''); };
+  const fillGuardian = () => { setEmail(DEFAULT_GUARDIAN.email); setPassword(DEFAULT_GUARDIAN.password); setError(''); };
+  const submit = (event: FormEvent) => {
+    event.preventDefault(); setError('');
+    if (!email.trim() || !password) { setError('Please enter your email and password.'); return; }
+    setLoading(true);
+    const user = authenticate(email, password, remember);
+    window.setTimeout(() => {
+      setLoading(false);
+      if (user) goDashboard(); else setError('Invalid email or password. Please try again.');
+    }, 250);
   };
-
-  return (
-    <div className="min-h-screen flex bg-white animate-fade">
-      {/* LEFT - BRANDING */}
-      <div className="hidden lg:flex w-[46%] bg-primary text-white flex-col justify-between p-10 animate-slide-left">
-        <div className="flex items-center gap-2">
-          <div className="w-10 h-10 bg-white text-primary flex items-center justify-center font-bold text-[18px]">V</div>
-          <div><p className="font-semibold text-[16px]">VLearnings</p><p className="text-[11px] text-slate-300">School Management System</p></div>
-        </div>
-        <div>
-          <h1 className="text-[32px] font-semibold leading-[1.2]">Manage your entire<br/>school in one place.</h1>
-          <p className="text-slate-300 text-[14px] mt-3 leading-relaxed max-w-[380px]">Students, attendance, fees, examinations and staff — everything your school needs, in a single secure system.</p>
-          <div className="mt-8 space-y-3 text-[13px]">
-            <p className="flex gap-2"><span className="w-5 h-5 bg-white/10 flex items-center justify-center text-[11px]">✓</span> Trusted by 120+ schools across Pakistan</p>
-            <p className="flex gap-2"><span className="w-5 h-5 bg-white/10 flex items-center justify-center text-[11px]">✓</span> Secure data • Daily backup • Role-based access</p>
-            <p className="flex gap-2"><span className="w-5 h-5 bg-white/10 flex items-center justify-center text-[11px]">✓</span> Works on mobile, tablet and desktop</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-3 border-t border-white/10 pt-5">
-          <div className="w-9 h-9 bg-white/10 flex items-center justify-center text-[12px] font-bold">SJ</div>
-          <div><p className="text-[13px] font-medium">Dr. Sarah Jenkins</p><p className="text-[11px] text-slate-400">Super Admin, VLearnings School</p></div>
-          <p className="ml-auto text-[11px] text-slate-400">© 2026 VLearnings</p>
-        </div>
-      </div>
-
-      {/* RIGHT - FORM */}
-      <div className="flex-1 flex items-center justify-center p-6 bg-white">
-        <div className="w-full max-w-[400px] animate-slide-up">
-          <div className="lg:hidden flex items-center gap-2 mb-8"><div className="w-9 h-9 bg-primary text-white flex items-center justify-center font-bold">V</div><p className="font-semibold">VLearnings</p></div>
-          <h2 className="text-[24px] font-semibold">Welcome back</h2>
-          <p className="text-muted text-[13px] mt-1">Sign in to your account to continue. Demo account is pre-filled.</p>
-
-          {error && <div className="mt-4 bg-red-50 border border-red-200 text-danger text-[13px] px-3 py-2">{error}</div>}
-
-          <label className="block text-[12px] font-medium mt-6 mb-1.5">Email Address</label>
-          <input value={email} onChange={e => setEmail(e.target.value)} placeholder="you@school.edu" className="w-full border border-border px-3 py-2.5 text-[13px] bg-white" />
-
-          <label className="block text-[12px] font-medium mt-4 mb-1.5">Password</label>
-          <div className="relative">
-            <input type={showPass ? "text" : "password"} value={password} onChange={e => setPassword(e.target.value)} placeholder="Enter password" className="w-full border border-border px-3 py-2.5 text-[13px] pr-16" />
-            <button onClick={() => setShowPass(!showPass)} className="absolute right-3 top-2.5 text-[12px] text-primary font-medium">{showPass ? "Hide" : "Show"}</button>
-          </div>
-
-          <div className="flex justify-between items-center mt-3 text-[12px]">
-            <label className="flex items-center gap-1.5 text-secondary"><input type="checkbox" defaultChecked className="accent-[#1B2A4A]" /> Remember me</label>
-            <button className="text-primary font-medium">Forgot password?</button>
-          </div>
-
-          <button onClick={handleLogin} disabled={loading} className="btn-press w-full bg-primary text-white py-2.5 text-[13px] font-medium mt-6 disabled:opacity-60">
-            {loading ? "Signing in..." : "Sign In"}
-          </button>
-
-          <div className="flex items-center gap-3 my-5"><div className="flex-1 h-px bg-border"></div><span className="text-[11px] text-muted">OR</span><div className="flex-1 h-px bg-border"></div></div>
-
-          <button onClick={goDashboard} className="btn-press w-full border border-border py-2.5 text-[13px] bg-white hover:bg-bg">Continue as Guest - View Demo</button>
-
-          <p className="text-center text-[12px] text-muted mt-5">Don't have an account? <button onClick={goRegister} className="text-primary font-semibold">Create account</button></p>
-          <p className="text-center text-[11px] text-muted mt-4">By signing in, you agree to our Terms & Privacy Policy.<br/>Need help? support@vlearnings.edu</p>
-        </div>
-      </div>
-    </div>
-  );
+  return <div className="auth-shell">
+    <section className="auth-showcase">
+      <div className="auth-brand"><div className="auth-logo">V</div><div><strong>VLearnings</strong><small>SMS Cloud v2.4</small></div><span className="auth-certified"><ShieldCheck size={15}/> SOC-2 & FERPA Certified</span></div>
+      <div className="auth-intro"><span className="auth-eyebrow"><GraduationCap size={16}/> UNIFIED ACADEMIC OPERATING SYSTEM</span><h1>Smarter School Management Starts Here</h1><p>Manage students, faculty, grading cycles, attendance rosters, and institutional workflows from one synchronized platform.</p></div>
+      <div className="analytics-card"><div className="analytics-top"><span className="traffic"><i/><i/><i/></span><span>live-campus-portal.vlearnings.io</span><b><Activity size={15}/> Real-Time Sync</b></div><div className="analytics-inner"><div className="analytics-caption">INSTITUTION ANALYTICS</div><div className="analytics-title">Faculty & Learner Pulse</div><div className="analytics-stats"><div><small>Attendance</small><strong>97.8%</strong><em>↗ +1.4%</em></div><div><small>GPA Index</small><strong>3.84</strong><em>◎ Target met</em></div><div><small>Fee Clearance</small><strong>94.2%</strong><em>✓ Automated</em></div></div><div className="analytics-bars">{[35,45,66,51,61,78,55].map((h,i)=><i key={i} style={{height:`${h}%`}} className={i===5?'bright':''}/>)}</div></div></div>
+      <div className="auth-benefits"><div><Landmark/><b>Simplified Ops</b><span>Automate grading, schedules & fee workflows.</span></div><div><Activity/><b>Real-Time Insights</b><span>Instant grade trends, predictive alerts & data.</span></div><div><Users/><b>Connected Campus</b><span>Single portal for faculty, students & guardians.</span></div></div>
+      <div className="auth-trust"><ShieldCheck size={19}/><span>Trusted by <b>450+ educational institutions</b> across 18 countries</span><small>IVY-LEAGUE　 •　 OXBRIDGE　 •　 ED-GLOBAL</small></div>
+    </section>
+    <section className="auth-panel"><div className="auth-status"><span><i/> System Status: <b>Operational</b></span><a href="mailto:support@vlearnings.edu"><CircleHelp size={15}/> Admin Helpdesk</a></div><form className="auth-form" onSubmit={submit}>
+      <h2>Welcome Back</h2><p className="auth-subtitle">Sign in to access your administrative dashboard & academic workflows.</p>
+      {error && <div className="auth-error" role="alert">{error}</div>}
+      <label htmlFor="login-email">Institutional Email</label><div className="auth-input"><Mail/><input id="login-email" type="email" autoComplete="username" placeholder="e.g. admin@school.edu" value={email} onChange={e=>setEmail(e.target.value)}/></div>
+      <div className="auth-label-row"><label htmlFor="login-password">Security Password</label><button type="button" className="auth-text-button" onClick={()=>setError('Please contact your school administrator to reset your password.')}>Forgot password?</button></div><div className="auth-input"><LockKeyhole/><input id="login-password" type={showPassword?'text':'password'} autoComplete="current-password" placeholder="Enter your password" value={password} onChange={e=>setPassword(e.target.value)}/><button type="button" aria-label={showPassword?'Hide password':'Show password'} onClick={()=>setShowPassword(v=>!v)}>{showPassword?<EyeOff/>:<Eye/>}</button></div>
+      <div className="auth-options"><label className="auth-check"><input type="checkbox" checked={remember} onChange={e=>setRemember(e.target.checked)}/> Remember device for 30 days</label><span><ShieldCheck size={14}/> Secure Sign In</span></div>
+      <button className="auth-submit" type="submit" disabled={loading}>{loading?'Signing in...':'Sign In to Dashboard'} <ArrowRight size={18}/></button>
+      <div className="flex flex-col sm:flex-row gap-2"><button type="button" className="auth-demo flex-1" onClick={fillAdmin}>Fill Default Admin Details</button><button type="button" className="auth-demo flex-1" onClick={fillGuardian}>Fill Default Guardian Details</button></div>
+      <div className="auth-or"><span/> OR CONTINUE WITH <span/></div><button type="button" className="auth-google" onClick={()=>setError('Google Workspace sign-in is not configured in this local demo.') }><Building2 size={18}/> Sign in with Google Workspace for Education</button>
+      <p className="auth-enroll">Don't have an institution account? <button type="button" onClick={goRegister}>Enroll School</button> <i>•</i> <a href="mailto:support@vlearnings.edu">Request Live Demo</a></p>
+    </form><footer className="auth-footer">Privacy Policy　 •　 Terms of Service　 •　 Security & Compliance<br/><span>© 2026 VLearnings Inc.</span></footer></section>
+  </div>;
 }
