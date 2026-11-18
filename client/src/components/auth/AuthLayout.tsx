@@ -22,7 +22,7 @@ function AuthLayout({ showChecklist = true, children }: Props) {
         className="relative hidden md:flex flex-col justify-between text-white p-10 bg-cover bg-center"
         style={{ backgroundImage: "url(/auth-bg.png)" }}
       >
-        <div className="absolute inset-0 bg-gradient-to-t from-violet-950/80 via-violet-900/10 to-violet-950/40" />
+        <div className="absolute inset-0 bg-gradient-to-t from-violet-950/60 via-transparent to-violet-950/10" />
 
         <div className="relative flex items-center gap-3">
           <div className="w-12 h-12 rounded-xl bg-white/20 border border-white/30 backdrop-blur flex items-center justify-center">
@@ -55,7 +55,6 @@ function AuthLayout({ showChecklist = true, children }: Props) {
 
       {/* RIGHT: sharp picture + 3D card */}
       <div className="relative flex flex-col min-h-screen overflow-hidden bg-violet-900">
-        {/* sharp image (no blur) */}
         <div
           className="absolute inset-0"
           style={{
@@ -64,15 +63,13 @@ function AuthLayout({ showChecklist = true, children }: Props) {
             backgroundPosition: "right center",
           }}
         />
-        {/* purple gradient overlay */}
         <div
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(160deg, rgba(76,29,149,0.78) 0%, rgba(91,33,182,0.55) 45%, rgba(30,27,75,0.85) 100%)",
+              "linear-gradient(160deg, rgba(139,92,246,0.35) 0%, rgba(167,139,250,0.20) 45%, rgba(76,29,149,0.40) 100%)",
           }}
         />
-        {/* diagonal light streaks */}
         <div
           className="absolute inset-0 opacity-40"
           style={{
@@ -80,7 +77,6 @@ function AuthLayout({ showChecklist = true, children }: Props) {
               "repeating-linear-gradient(120deg, rgba(255,255,255,0.10) 0px, rgba(255,255,255,0.10) 2px, transparent 2px, transparent 40px)",
           }}
         />
-        {/* decorative rings */}
         <div className="absolute -top-20 -right-20 w-72 h-72 rounded-full border-[28px] border-white/10" />
         <div className="absolute -bottom-16 -left-16 w-64 h-64 rounded-full border-[24px] border-white/10" />
         <div className="absolute top-1/2 right-6 w-6 h-6 rounded-full bg-white/30" />
@@ -91,9 +87,8 @@ function AuthLayout({ showChecklist = true, children }: Props) {
           <span className="text-2xl font-bold">VLEARNING</span>
         </div>
 
-        <div className="relative flex-1 flex items-center justify-center px-4 sm:px-8 py-14">
-                    <div className="relative w-full max-w-5xl" style={{ perspective: "1400px" }}>
-            {/* stacked layers */}
+        <div className="relative flex-1 flex items-center justify-center px-3 sm:px-4 py-14">
+          <div className="relative w-full max-w-5xl" style={{ perspective: "1400px" }}>
             <div
               className="absolute inset-x-5 -bottom-4 h-full rounded-[28px]"
               style={{ background: "rgba(255,255,255,0.35)" }}
@@ -103,9 +98,8 @@ function AuthLayout({ showChecklist = true, children }: Props) {
               style={{ background: "rgba(255,255,255,0.18)" }}
             />
 
-            {/* card */}
             <div
-               className="relative rounded-[28px] px-8 sm:px-40 pt-35 pb-25 transition-transform duration-500 ease-out hover:[transform:rotateX(2deg)_rotateY(-3deg)_translateY(-4px)]"
+              className="relative rounded-[28px] px-8 sm:px-20 pt-24 pb-16 transition-transform duration-500 ease-out hover:[transform:rotateX(2deg)_rotateY(-3deg)_translateY(-4px)]"
               style={{
                 background: "rgba(255,255,255,0.96)",
                 border: "1px solid rgba(255,255,255,0.9)",
@@ -114,18 +108,17 @@ function AuthLayout({ showChecklist = true, children }: Props) {
                   "0 50px 90px -25px rgba(0,0,0,0.6), 0 20px 40px -20px rgba(0,0,0,0.45), inset 0 2px 0 rgba(255,255,255,1)",
               }}
             >
-              {/* floating logo badge */}
               <div
-                className="absolute -top-10 left-1/2 -translate-x-1/2 w-20 h-20 rounded-2xl text-white flex items-center justify-center"
+                className="absolute -top-12 left-1/2 -translate-x-1/2 w-24 h-24 rounded-3xl text-white flex items-center justify-center"
                 style={{
                   background: "linear-gradient(135deg, #8b5cf6, #5b21b6)",
                   border: "4px solid #fff",
                   boxShadow: "0 20px 34px -8px rgba(76,29,149,0.7)",
                 }}
               >
-                <GraduationCap size={40} />
+                <GraduationCap size={48} />
               </div>
-              {children}
+              <div className="w-full max-w-2xl mx-auto">{children}</div>
             </div>
           </div>
         </div>

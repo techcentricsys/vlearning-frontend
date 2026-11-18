@@ -2,6 +2,7 @@ import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { Mail, Lock, Eye, EyeOff, LogIn } from "lucide-react"
 import AuthLayout from "../components/auth/AuthLayout"
+import { login } from "../auth/auth"
 
 function Login() {
   const navigate = useNavigate()
@@ -13,15 +14,16 @@ function Login() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     // Abhi dummy login hai. Backend banne ke baad asli check lagega.
+    login({ name: email.split("@")[0] || "Admin", email, role: "Admin" })
     navigate("/")
   }
 
-  const label = "block text-base font-semibold text-slate-800 mb-2"
+  const label = "block text-lg font-semibold text-slate-800 mb-2"
   const input =
-    "w-full h-14 pl-14 pr-4 rounded-xl border-2 border-slate-200 bg-white text-lg text-slate-900 placeholder:text-slate-400 outline-none shadow-[inset_0_2px_4px_rgba(0,0,0,0.06)] transition focus:border-violet-500 focus:ring-4 focus:ring-violet-100"
-  const icon = "absolute left-4 top-1/2 -translate-y-1/2 text-violet-500"
+    "w-full h-16 pl-16 pr-4 rounded-2xl border-2 border-slate-200 bg-white text-xl text-slate-900 placeholder:text-slate-400 outline-none shadow-[inset_0_2px_4px_rgba(0,0,0,0.06)] transition focus:border-violet-500 focus:ring-4 focus:ring-violet-100"
+  const icon = "absolute left-5 top-1/2 -translate-y-1/2 text-violet-500"
   const btn3d =
-    "w-full h-14 flex items-center justify-center gap-2 bg-gradient-to-b from-violet-500 to-violet-800 hover:from-violet-600 hover:to-violet-900 text-white text-lg font-bold rounded-xl shadow-[0_7px_0_0_rgba(46,16,101,0.6),0_16px_26px_-6px_rgba(46,16,101,0.55)] active:translate-y-1.5 active:shadow-[0_2px_0_0_rgba(46,16,101,0.6)] transition-all"
+    "w-full h-16 flex items-center justify-center gap-2 bg-gradient-to-b from-violet-500 to-violet-800 hover:from-violet-600 hover:to-violet-900 text-white text-xl font-bold rounded-2xl shadow-[0_7px_0_0_rgba(46,16,101,0.6),0_16px_26px_-6px_rgba(46,16,101,0.55)] active:translate-y-1.5 active:shadow-[0_2px_0_0_rgba(46,16,101,0.6)] transition-all"
 
   return (
     <AuthLayout>
@@ -36,7 +38,7 @@ function Login() {
         <div className="mt-9">
           <label className={label}>Email Address</label>
           <div className="relative">
-            <Mail size={24} className={icon} />
+            <Mail size={28} className={icon} />
             <input
               type="email"
               required
@@ -51,21 +53,21 @@ function Login() {
         <div className="mt-5">
           <label className={label}>Password</label>
           <div className="relative">
-            <Lock size={24} className={icon} />
+            <Lock size={28} className={icon} />
             <input
               type={showPassword ? "text" : "password"}
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
-              className={`${input} pr-14`}
+              className={`${input} pr-16`}
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-violet-600"
+              className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-violet-600"
             >
-              {showPassword ? <EyeOff size={24} /> : <Eye size={24} />}
+              {showPassword ? <EyeOff size={28} /> : <Eye size={28} />}
             </button>
           </div>
         </div>
@@ -86,7 +88,7 @@ function Login() {
         </div>
 
         <button type="submit" className={`mt-8 ${btn3d}`}>
-          <LogIn size={22} /> Sign In
+          <LogIn size={26} /> Sign In
         </button>
 
         <div className="my-6 flex items-center gap-4 text-base text-slate-400">
@@ -97,9 +99,9 @@ function Login() {
 
         <button
           type="button"
-          className="w-full h-14 flex items-center justify-center gap-3 border-2 border-slate-200 rounded-xl text-lg font-semibold text-slate-800 shadow-sm hover:bg-slate-50 hover:-translate-y-0.5 transition"
+          className="w-full h-16 flex items-center justify-center gap-3 border-2 border-slate-200 rounded-2xl text-xl font-semibold text-slate-800 shadow-sm hover:bg-slate-50 hover:-translate-y-0.5 transition"
         >
-          <span className="w-7 h-7 rounded-full border-2 border-slate-400 flex items-center justify-center text-sm font-bold">
+          <span className="w-8 h-8 rounded-full border-2 border-slate-400 flex items-center justify-center text-sm font-bold">
             G
           </span>
           Continue with Google
