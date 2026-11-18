@@ -49,6 +49,7 @@ const dropdownItems: Record<string, string[]> = {
   Students: ['Overview', 'Students', 'Admissions', 'Attendance', 'Academic Records', 'ID Cards'],
   Admissions: ['Applications', 'Entrance Tests', 'Merit List', 'Fee Challans'],
   'Fees & Accounts': ['Overview', 'Fee Structures', 'Fee Challans', 'Collect Fees', 'Discounts & Scholarships', 'Financial Reports'],
+  Examinations: ['Overview', 'Examination Management', 'Exam Timetable', 'Exam Attendance', 'Marks Entry', 'Marks Approval', 'Results & Grading', 'Report Cards', 'Reports & Analytics', 'Examination Settings'],
 };
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -63,10 +64,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
     if (['Applications', 'Entrance Tests', 'Merit List', 'Fee Challans'].includes(activeItem)) return 'Admissions';
     if (activeItem === 'Students') return 'Students';
     if (activeItem === 'Fees & Accounts') return 'Fees & Accounts';
+    if (activeItem === 'Examinations' || dropdownItems.Examinations.includes(activeItem)) return 'Examinations';
     return null;
   });
 
-  const activeDropdown = Object.entries(dropdownItems).find(([, items]) => items.includes(activeItem))?.[0];
+  const activeDropdown = Object.entries(dropdownItems).find(([, items]) => items.includes(activeItem))?.[0] ?? (activeItem === 'Examinations' ? 'Examinations' : undefined);
 
   useEffect(() => {
     if (activeDropdown) setExpandedMenu(activeDropdown);
@@ -80,6 +82,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       if (label === 'Students') onNavigate('Students');
       else if (label === 'Admissions') onNavigate('Applications');
       else if (label === 'Fees & Accounts') onNavigate('Fees & Accounts');
+      else if (label === 'Examinations') onNavigate('Examinations');
       return;
     }
     setExpandedMenu((current) => (current === label ? null : label));
@@ -90,6 +93,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     setExpandedMenu(parent);
     if (parent === 'Students') onNavigate(`StudentTab:${item}`);
     else if (parent === 'Fees & Accounts') onNavigate(`FeesTab:${item}`);
+    else if (parent === 'Examinations') onNavigate(item === 'Overview' ? 'Examinations' : `ExaminationTab:${item}`);
     else onNavigate(item);
   };
 
@@ -133,6 +137,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     {dropdownItems[label].map((item) => {
                       const selected = label === 'Students' ? activeItem === 'Students' && activeStudentTab === item
                         : label === 'Fees & Accounts' ? activeItem === 'Fees & Accounts' && activeFeesTab === item
+                        : label === 'Examinations' ? activeItem === item || (activeItem === 'Examinations' && item === 'Overview')
                         : activeItem === item;
                       return <button
                         key={item}
