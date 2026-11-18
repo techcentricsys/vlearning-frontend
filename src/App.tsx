@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Sidebar } from './components/layout/Sidebar';
 import { Topbar } from './components/layout/Topbar';
 import { DashboardPage } from './modules/dashboard/pages/DashboardPage';
@@ -11,6 +11,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 import { ensureDefaultAdmin, getSession, logout } from './auth';
 import { useEffect } from 'react';
+import AcademicsModule, { type AcademicTab } from './components/AcademicsModule';
 
 const App: React.FC = () => {
   const [authPage, setAuthPage] = useState<'login' | 'register' | 'app'>(() => getSession() ? 'app' : 'login');
@@ -23,6 +24,7 @@ const App: React.FC = () => {
   const [studentTab, setStudentTab] = useState('Overview');
   const [feesTab, setFeesTab] = useState<Tab>('Overview');
   const [parentModuleActive, setParentModuleActive] = useState(false);
+  const [academicTab, setAcademicTab] = useState<AcademicTab>('Overview');
   const [dialog, setDialog] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const openDialog = (title: string) => { setSubmitted(false); setDialog(title); };
@@ -51,6 +53,22 @@ const App: React.FC = () => {
     />
     <Topbar collapsed={collapsed} onAction={openDialog} />
     <main className={`${collapsed ? 'ml-[76px]' : 'ml-[250px]'} min-h-screen pt-16 transition-all duration-200`}><div className="p-6 max-w-[1800px] mx-auto">{activePage === 'Students' ? <StudentModule initialTab={studentTab} onBack={() => setStudentTab("Overview")} /> : activePage === 'Fees & Accounts' ? <FeesModule initialTab={feesTab} /> : ['Applications','Entrance Tests','Merit List','Fee Challans'].includes(activePage) ? <AdmissionsPage section={activePage as 'Applications'|'Entrance Tests'|'Merit List'|'Fee Challans'} onNavigate={setActivePage} /> : ['Examinations','Examination Management','Exam Timetable','Exam Attendance','Marks Entry','Marks Approval','Results & Grading','Report Cards','Reports & Analytics','Examination Settings'].includes(activePage) ? <ExaminationsPage initialSection={activePage === 'Examinations' ? 'Overview' : activePage as 'Examination Management'|'Exam Timetable'|'Exam Attendance'|'Marks Entry'|'Marks Approval'|'Results & Grading'|'Report Cards'|'Reports & Analytics'|'Examination Settings'} /> : activePage === 'Dashboard' ? <DashboardPage onAction={openDialog} /> : parentModuleActive ? <ParentGuardianPage initialSection={activePage === 'Parent Overview' ? 'Overview' : activePage === 'Parent Reports & Analytics' ? 'Reports & Analytics' : activePage} /> : <section className="min-h-[420px] bg-white rounded-xl border border-outline-variant/40 p-8 shadow-sm flex flex-col items-center justify-center text-center"><div className="w-16 h-16 rounded-2xl bg-surface-container-low flex items-center justify-center mb-5"><span className="material-symbols-outlined text-3xl text-on-surface-variant">construction</span></div><h1 className="text-2xl font-bold text-on-surface">{activePage}</h1><p className="mt-2 text-sm font-medium text-on-surface-variant">Under Development</p><p className="mt-1 text-sm text-on-surface-variant">This page is currently being developed and will be available soon.</p></section>}</div></main>
+      activeAcademicTab={academicTab}
+      onNavigate={(item) => {
+        if (item === 'Dashboard') setActivePage('Dashboard');
+        else if (item === 'Students') { setActivePage('Students'); setStudentTab('Overview'); }
+        else if (item === 'Fees & Accounts') { setActivePage('Fees & Accounts'); setFeesTab('Overview'); }
+        else if (item === 'Examinations') setActivePage('Examinations');
+        else if (item.startsWith('ExaminationTab:')) setActivePage(item.slice(15));
+        else if (item.startsWith('StudentTab:')) { setActivePage('Students'); setStudentTab(item.slice(11)); }
+        else if (item.startsWith('FeesTab:')) { setActivePage('Fees & Accounts'); setFeesTab(item.slice(8) as Tab); }
+        else if (item === 'Academics & Timetable') { setActivePage('Academics & Timetable'); setAcademicTab('Overview'); }
+        else if (item.startsWith('AcademicTab:')) { setActivePage('Academics & Timetable'); setAcademicTab(item.slice(12) as AcademicTab); }
+        else setActivePage(item);
+      }}
+    />
+    <Topbar collapsed={collapsed} onAction={openDialog} />
+    <main className={`${collapsed ? 'ml-[76px]' : 'ml-[250px]'} min-h-screen pt-16 transition-all duration-200`}><div className="p-6 max-w-[1800px] mx-auto">{activePage === 'Students' ? <StudentModule initialTab={studentTab} onBack={() => setStudentTab("Overview")} /> : activePage === 'Fees & Accounts' ? <FeesModule initialTab={feesTab} /> : activePage === 'Academics & Timetable' ? <AcademicsModule initialTab={academicTab} onNavigate={setAcademicTab} /> : ['Applications','Entrance Tests','Merit List','Fee Challans'].includes(activePage) ? <AdmissionsPage section={activePage as 'Applications'|'Entrance Tests'|'Merit List'|'Fee Challans'} onNavigate={setActivePage} /> : activePage === 'Dashboard' ? <DashboardPage onAction={openDialog} /> : <section className="min-h-[420px] bg-white rounded-xl border border-outline-variant/40 p-8 shadow-sm flex flex-col items-center justify-center text-center"><div className="w-16 h-16 rounded-2xl bg-surface-container-low flex items-center justify-center mb-5"><span className="material-symbols-outlined text-3xl text-on-surface-variant">construction</span></div><h1 className="text-2xl font-bold text-on-surface">{activePage}</h1><p className="mt-2 text-sm font-medium text-on-surface-variant">Under Development</p><p className="mt-1 text-sm text-on-surface-variant">This page is currently being developed and will be available soon.</p></section>}</div></main>
     {dialog && <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/40 p-4" onMouseDown={e => { if (e.target === e.currentTarget) setDialog(null); }}>
       <section role="dialog" aria-modal="true" aria-labelledby="dialog-title" className="w-full max-w-lg rounded-2xl bg-white shadow-2xl border border-outline-variant/40 overflow-hidden">
         <div className="flex items-center justify-between px-5 py-4 border-b border-outline-variant/30"><div><h2 id="dialog-title" className="text-lg font-bold text-on-surface">{dialog}</h2><p className="text-xs text-on-surface-variant mt-0.5">VLearnings School Management System</p></div><button aria-label="Close" onClick={() => setDialog(null)} className="p-2 rounded-lg hover:bg-surface-container-low text-on-surface-variant"><span className="material-symbols-outlined">close</span></button></div>
@@ -70,3 +88,4 @@ const App: React.FC = () => {
   </div>;
 };
 export default App;
+
