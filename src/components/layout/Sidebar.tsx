@@ -70,7 +70,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     return null;
   });
 
-  const activeDropdown = Object.entries(dropdownItems).find(([, items]) => items.includes(activeItem))?.[0];
+  const activeDropdown = Object.entries(dropdownItems).find(([, items]) => items.includes(activeItem))?.[0] ?? (activeItem === 'Examinations' ? 'Examinations' : undefined);
 
   useEffect(() => {
     if (activeDropdown) setExpandedMenu(activeDropdown);

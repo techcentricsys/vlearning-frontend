@@ -28,6 +28,8 @@ const App: React.FC = () => {
         if (item === 'Dashboard') setActivePage('Dashboard');
         else if (item === 'Students') { setActivePage('Students'); setStudentTab('Overview'); }
         else if (item === 'Fees & Accounts') { setActivePage('Fees & Accounts'); setFeesTab('Overview'); }
+        else if (item === 'Examinations') setActivePage('Examinations');
+        else if (item.startsWith('ExaminationTab:')) setActivePage(item.slice(15));
         else if (item.startsWith('StudentTab:')) { setActivePage('Students'); setStudentTab(item.slice(11)); }
         else if (item.startsWith('FeesTab:')) { setActivePage('Fees & Accounts'); setFeesTab(item.slice(8) as Tab); }
         else if (item === 'Academics & Timetable') { setActivePage('Academics & Timetable'); setAcademicTab('Overview'); }
