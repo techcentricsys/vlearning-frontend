@@ -12,6 +12,7 @@ import Register from './components/Register';
 import { ensureDefaultAdmin, getSession, logout } from './auth';
 import { useEffect } from 'react';
 import AcademicsModule, { type AcademicTab } from './components/AcademicsModule';
+import HRPayrollModule, { type HRTab } from './components/HRPayrollModule';
 
 const App: React.FC = () => {
   const [authPage, setAuthPage] = useState<'login' | 'register' | 'app'>(() => getSession() ? 'app' : 'login');
@@ -28,6 +29,7 @@ const App: React.FC = () => {
   const [feesTab, setFeesTab] = useState<Tab>('Overview');
   const [parentModuleActive, setParentModuleActive] = useState(false);
   const [academicTab, setAcademicTab] = useState<AcademicTab>('Overview');
+  const [hrTab, setHrTab] = useState<HRTab>('Overview');
   const [dialog, setDialog] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
   
@@ -45,6 +47,7 @@ const App: React.FC = () => {
         activeStudentTab={studentTab}
         activeFeesTab={feesTab}
         activeAcademicTab={academicTab}
+        activeHRTab={hrTab}
         currentUser={currentUser}
         onSignOut={signOut}
         onNavigate={(item) => {
@@ -69,6 +72,14 @@ const App: React.FC = () => {
             setParentModuleActive(false); 
             setActivePage('Academics & Timetable'); 
             setAcademicTab('Overview'); 
+          } else if (item === 'HR & Payroll') {
+            setParentModuleActive(false);
+            setActivePage('HR & Payroll');
+            setHrTab('Overview');
+          } else if (item.startsWith('HRTab:')) {
+            setParentModuleActive(false);
+            setActivePage('HR & Payroll');
+            setHrTab(item.slice(6) as HRTab);
           } else if (item.startsWith('ExaminationTab:')) { 
             setParentModuleActive(false); 
             setActivePage(item.slice(15)); 
@@ -99,6 +110,8 @@ const App: React.FC = () => {
             <StudentModule initialTab={studentTab} onBack={() => setStudentTab("Overview")} />
           ) : activePage === 'Fees & Accounts' ? (
             <FeesModule initialTab={feesTab} />
+          ) : activePage === 'HR & Payroll' ? (
+            <HRPayrollModule initialTab={hrTab} onNavigate={setHrTab} />
           ) : activePage === 'Academics & Timetable' ? (
             <AcademicsModule initialTab={academicTab} onNavigate={setAcademicTab} />
           ) : ['Applications','Entrance Tests','Merit List','Fee Challans'].includes(activePage) ? (

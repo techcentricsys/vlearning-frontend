@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import type { AuthUser } from '../../auth';
 
 interface SidebarProps {
@@ -11,6 +11,7 @@ interface SidebarProps {
   currentUser: Omit<AuthUser, 'password'> | null;
   onSignOut: () => void;
   activeAcademicTab: string;
+  activeHRTab: string;
 }
 
 type MenuItem = [string, string];
@@ -56,6 +57,7 @@ const dropdownItems: Record<string, string[]> = {
   Admissions: ['Applications', 'Entrance Tests', 'Merit List', 'Fee Challans'],
   'Fees & Accounts': ['Overview', 'Fee Structures', 'Fee Challans', 'Collect Fees', 'Discounts & Scholarships', 'Financial Reports'],
   'Academics & Timetable': ['Overview', 'Class Scheduling & Timetable', 'Subject & Teacher Assignment', 'Course Outlines & Syllabi', 'Substitute Teachers', 'Academic Calendar'],
+  'HR & Payroll': ['Overview', 'Employee Records', 'Attendance & Biometrics', 'Payroll Processing', 'Leave Management', 'HR Reports & Compliance'],
 };
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -68,12 +70,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
   currentUser,
   onSignOut,
   activeAcademicTab,
+  activeHRTab,
 }) => {
   const [expandedMenu, setExpandedMenu] = useState<string | null>(() => {
     if (['Applications', 'Entrance Tests', 'Merit List', 'Fee Challans'].includes(activeItem)) return 'Admissions';
     if (activeItem === 'Students') return 'Students';
     if (activeItem === 'Fees & Accounts') return 'Fees & Accounts';
     if (activeItem === 'Academics & Timetable') return 'Academics & Timetable';
+    if (activeItem === 'HR & Payroll') return 'HR & Payroll';
     return null;
   });
 
@@ -93,6 +97,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       else if (label === 'Parent & Guardian') onNavigate('Parent Overview');
       else if (label === 'Fees & Accounts') onNavigate('Fees & Accounts');
       else if (label === 'Academics & Timetable') onNavigate('Academics & Timetable');
+      else if (label === 'HR & Payroll') onNavigate('HR & Payroll');
       return;
     }
     setExpandedMenu((current) => (current === label ? null : label));
@@ -104,6 +109,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     if (parent === 'Students') onNavigate(`StudentTab:${item}`);
     else if (parent === 'Fees & Accounts') onNavigate(`FeesTab:${item}`);
     else if (parent === 'Academics & Timetable') onNavigate(`AcademicTab:${item}`);
+    else if (parent === 'HR & Payroll') onNavigate('HRTab:' + item);
     else onNavigate(item);
   };
 
@@ -148,6 +154,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       const selected = label === 'Students' ? activeItem === 'Students' && activeStudentTab === item
                         : label === 'Fees & Accounts' ? activeItem === 'Fees & Accounts' && activeFeesTab === item
                         : label === 'Academics & Timetable' ? activeItem === 'Academics & Timetable' && activeAcademicTab === item
+                        : label === 'HR & Payroll' ? activeItem === 'HR & Payroll' && activeHRTab === item
                         : activeItem === item;
                       return <button
                         key={item}
@@ -173,3 +180,4 @@ export const Sidebar: React.FC<SidebarProps> = ({
     </aside>
   );
 };
+
