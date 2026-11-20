@@ -55,9 +55,10 @@ const dropdownItems: Record<string, string[]> = {
   Students: ['Overview', 'Students', 'Admissions', 'Attendance', 'Academic Records', 'ID Cards'],
   'Parent & Guardian': ['Parent Overview', 'Parent Directory', 'Student Relationships', 'Portal Accounts', 'Communication', 'Parent Reports & Analytics'],
   Admissions: ['Applications', 'Entrance Tests', 'Merit List', 'Fee Challans'],
-  'Fees & Accounts': ['Overview', 'Fee Structures', 'Fee Challans', 'Collect Fees', 'Discounts & Scholarships', 'Financial Reports'],
+  'Fees & Accounts': ['Overview', 'Fee Structures', 'Fee Challans', 'Collect Fees', 'Discounts & Scholarships', 'Fines', 'Refunds', 'Financial Reports'],
   'Academics & Timetable': ['Overview', 'Class Scheduling & Timetable', 'Subject & Teacher Assignment', 'Course Outlines & Syllabi', 'Substitute Teachers', 'Academic Calendar'],
   'HR & Payroll': ['Overview', 'Employee Records', 'Attendance & Biometrics', 'Payroll Processing', 'Leave Management', 'HR Reports & Compliance'],
+  Transport: ['Dashboard', 'Routes & Stops', 'Vehicles', 'Drivers', 'Student Allocation', 'Pickup & Drop Logs', 'Transport Fees'],
 };
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -78,17 +79,22 @@ export const Sidebar: React.FC<SidebarProps> = ({
     if (activeItem === 'Fees & Accounts') return 'Fees & Accounts';
     if (activeItem === 'Academics & Timetable') return 'Academics & Timetable';
     if (activeItem === 'HR & Payroll') return 'HR & Payroll';
+    if (activeItem.startsWith('Transport ')) return 'Transport';
     return null;
   });
 
-  const activeDropdown = Object.entries(dropdownItems).find(([, items]) => items.includes(activeItem))?.[0] ?? (activeItem === 'Examinations' ? 'Examinations' : undefined);
+  const activeDropdown = activeItem.startsWith('Transport ') ? 'Transport' : Object.entries(dropdownItems).find(([, items]) => items.includes(activeItem))?.[0] ?? (activeItem === 'Examinations' ? 'Examinations' : undefined);
+  const financeOnly = /accountant|finance officer/i.test(currentUser?.role ?? '');
+  const visibleGroups: MenuGroup[] = financeOnly
+    ? [{ title: 'Finance', items: [['account_balance_wallet', 'Fees & Accounts']] }]
+    : groups;
 
   useEffect(() => {
     if (activeDropdown) setExpandedMenu(activeDropdown);
   }, [activeDropdown]);
 
   const isDropdownActive = (label: string) =>
-    label === activeItem || (dropdownItems[label]?.includes(activeItem) ?? false);
+    label === activeItem || (label === 'Transport' && activeItem.startsWith('Transport ')) || (dropdownItems[label]?.includes(activeItem) ?? false);
 
   const handleParentClick = (label: string) => {
     if (collapsed) {
@@ -98,6 +104,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       else if (label === 'Fees & Accounts') onNavigate('Fees & Accounts');
       else if (label === 'Academics & Timetable') onNavigate('Academics & Timetable');
       else if (label === 'HR & Payroll') onNavigate('HR & Payroll');
+      else if (label === 'Transport') onNavigate('Transport');
       return;
     }
     setExpandedMenu((current) => (current === label ? null : label));
@@ -110,6 +117,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     else if (parent === 'Fees & Accounts') onNavigate(`FeesTab:${item}`);
     else if (parent === 'Academics & Timetable') onNavigate(`AcademicTab:${item}`);
     else if (parent === 'HR & Payroll') onNavigate('HRTab:' + item);
+    else if (parent === 'Transport') onNavigate('TransportTab:' + item);
     else onNavigate(item);
   };
 
@@ -130,7 +138,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
 
         <div className="overflow-y-auto px-2 py-4 space-y-4 flex-1">
-          {groups.map((group) => <div className="space-y-1" key={group.title}>
+          {visibleGroups.map((group) => <div className="space-y-1" key={group.title}>
             {!collapsed && <div className="px-2 text-xs uppercase tracking-wider text-on-surface-variant font-semibold">{group.title}</div>}
             <nav className="space-y-1" aria-label={group.title}>
               {group.items.map(([icon, label]) => {
@@ -155,6 +163,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         : label === 'Fees & Accounts' ? activeItem === 'Fees & Accounts' && activeFeesTab === item
                         : label === 'Academics & Timetable' ? activeItem === 'Academics & Timetable' && activeAcademicTab === item
                         : label === 'HR & Payroll' ? activeItem === 'HR & Payroll' && activeHRTab === item
+                        : label === 'Transport' ? activeItem === `Transport ${item}`
                         : activeItem === item;
                       return <button
                         key={item}
