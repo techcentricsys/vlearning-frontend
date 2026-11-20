@@ -13,6 +13,7 @@ import { ensureDefaultAdmin, getSession, logout } from './auth';
 import { useEffect } from 'react';
 import AcademicsModule, { type AcademicTab } from './components/AcademicsModule';
 import HRPayrollModule, { type HRTab } from './components/HRPayrollModule';
+import TransportPage from './modules/transport/pages/TransportPage';
 
 const App: React.FC = () => {
   const [authPage, setAuthPage] = useState<'login' | 'register' | 'app'>(() => getSession() ? 'app' : 'login');
@@ -65,6 +66,12 @@ const App: React.FC = () => {
             setParentModuleActive(false); 
             setActivePage('Fees & Accounts'); 
             setFeesTab('Overview'); 
+          } else if (item === 'Transport') {
+            setParentModuleActive(false);
+            setActivePage('Transport Dashboard');
+          } else if (item.startsWith('TransportTab:')) {
+            setParentModuleActive(false);
+            setActivePage('Transport ' + item.slice(13));
           } else if (item === 'Examinations') { 
             setParentModuleActive(false); 
             setActivePage('Examinations'); 
@@ -118,6 +125,11 @@ const App: React.FC = () => {
             <AdmissionsPage section={activePage as 'Applications'|'Entrance Tests'|'Merit List'|'Fee Challans'} onNavigate={setActivePage} />
           ) : ['Examinations','Examination Management','Exam Timetable','Exam Attendance','Marks Entry','Marks Approval','Results & Grading','Report Cards','Reports & Analytics','Examination Settings'].includes(activePage) ? (
             <ExaminationsPage initialSection={activePage === 'Examinations' ? 'Overview' : activePage as any} />
+          ) : ['Transport Dashboard','Transport Routes & Stops','Transport Vehicles','Transport Drivers','Transport Student Allocation','Transport Pickup & Drop Logs','Transport Transport Fees'].includes(activePage) ? (
+            <TransportPage
+              section={(activePage === 'Transport Dashboard' ? 'Dashboard' : activePage.slice(10)) as any}
+              onNavigate={(page) => setActivePage(page === 'Dashboard' ? 'Transport Dashboard' : 'Transport ' + page)}
+            />
           ) : activePage === 'Dashboard' ? (
             <DashboardPage onAction={openDialog} />
           ) : parentModuleActive ? (
