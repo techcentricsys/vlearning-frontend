@@ -13,7 +13,8 @@ import { ensureDefaultAdmin, getSession, logout } from './auth';
 import { useEffect } from 'react';
 import AcademicsModule, { type AcademicTab } from './components/AcademicsModule';
 import HRPayrollModule, { type HRTab } from './components/HRPayrollModule';
-import TransportPage from './modules/transport/pages/TransportPage';
+import TransportPage from './modules/transport/pages/TransportPage';
+import HostelBoardingModule, { type HostelTab } from './components/HostelBoardingModule';
 
 const App: React.FC = () => {
   const [authPage, setAuthPage] = useState<'login' | 'register' | 'app'>(() => getSession() ? 'app' : 'login');
@@ -31,6 +32,7 @@ const App: React.FC = () => {
   const [parentModuleActive, setParentModuleActive] = useState(false);
   const [academicTab, setAcademicTab] = useState<AcademicTab>('Overview');
   const [hrTab, setHrTab] = useState<HRTab>('Overview');
+  const [hostelTab, setHostelTab] = useState<HostelTab>('Overview');
   const [dialog, setDialog] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
   
@@ -49,6 +51,7 @@ const App: React.FC = () => {
         activeFeesTab={feesTab}
         activeAcademicTab={academicTab}
         activeHRTab={hrTab}
+        activeHostelTab={hostelTab}
         currentUser={currentUser}
         onSignOut={signOut}
         onNavigate={(item) => {
@@ -87,6 +90,14 @@ const App: React.FC = () => {
             setParentModuleActive(false);
             setActivePage('HR & Payroll');
             setHrTab(item.slice(6) as HRTab);
+          } else if (item === 'Hostel') {
+            setParentModuleActive(false);
+            setActivePage('Hostel');
+            setHostelTab('Overview');
+          } else if (item.startsWith('HostelTab:')) {
+            setParentModuleActive(false);
+            setActivePage('Hostel');
+            setHostelTab(item.slice(10) as HostelTab);
           } else if (item.startsWith('ExaminationTab:')) { 
             setParentModuleActive(false); 
             setActivePage(item.slice(15)); 
@@ -113,7 +124,9 @@ const App: React.FC = () => {
       
       <main className={`${collapsed ? 'ml-[76px]' : 'ml-[250px]'} min-h-screen pt-16 transition-all duration-200`}>
         <div className="p-6 max-w-[1800px] mx-auto">
-          {activePage === 'Students' ? (
+          {activePage === 'Hostel' ? (
+            <HostelBoardingModule initialTab={hostelTab} onTabChange={setHostelTab} />
+          ) : activePage === 'Students' ? (
             <StudentModule initialTab={studentTab} onBack={() => setStudentTab("Overview")} />
           ) : activePage === 'Fees & Accounts' ? (
             <FeesModule initialTab={feesTab} />
@@ -199,3 +212,6 @@ const App: React.FC = () => {
 };
 
 export default App;
+
+
+
