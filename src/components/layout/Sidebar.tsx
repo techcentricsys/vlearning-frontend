@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { AuthUser } from '../../auth';
 
 interface SidebarProps {
@@ -53,7 +53,8 @@ const groups: MenuGroup[] = [
 ];
 
 const dropdownItems: Record<string, string[]> = {
-  Students: ['Overview', 'Students', 'Admissions', 'Attendance', 'Academic Records', 'ID Cards'],
+  Attendance: ['Attendance Overview', 'Student Attendance', 'Staff Attendance', 'Attendance Records', 'Biometric / RFID', 'Attendance Reports'],
+  Students: ['Overview', 'Students', 'Admissions', 'Academic Records', 'ID Cards'],
   'Parent & Guardian': ['Parent Overview', 'Parent Directory', 'Student Relationships', 'Portal Accounts', 'Communication', 'Parent Reports & Analytics'],
   Admissions: ['Applications', 'Entrance Tests', 'Merit List', 'Fee Challans'],
   'Fees & Accounts': ['Overview', 'Fee Structures', 'Fee Challans', 'Collect Fees', 'Discounts & Scholarships', 'Fines', 'Refunds', 'Financial Reports'],

@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { Sidebar } from './components/layout/Sidebar';
 import { Topbar } from './components/layout/Topbar';
 import { DashboardPage } from './modules/dashboard/pages/DashboardPage';
@@ -13,8 +13,10 @@ import { ensureDefaultAdmin, getSession, logout } from './auth';
 import { useEffect } from 'react';
 import AcademicsModule, { type AcademicTab } from './components/AcademicsModule';
 import HRPayrollModule, { type HRTab } from './components/HRPayrollModule';
-import TransportPage from './modules/transport/pages/TransportPage';
+import TransportPage from './modules/transport/pages/TransportPage';
+
 import HostelBoardingModule, { type HostelTab } from './components/HostelBoardingModule';
+import AttendancePage from './modules/attendance/pages/AttendancePage';
 
 const App: React.FC = () => {
   const [authPage, setAuthPage] = useState<'login' | 'register' | 'app'>(() => getSession() ? 'app' : 'login');
@@ -143,6 +145,8 @@ const App: React.FC = () => {
               section={(activePage === 'Transport Dashboard' ? 'Dashboard' : activePage.slice(10)) as any}
               onNavigate={(page) => setActivePage(page === 'Dashboard' ? 'Transport Dashboard' : 'Transport ' + page)}
             />
+          ) : ['Attendance Overview','Student Attendance','Staff Attendance','Attendance Records','Biometric / RFID','Attendance Reports'].includes(activePage) ? (
+            <AttendancePage initialSection={activePage === 'Attendance Overview' ? 'Overview' : activePage === 'Attendance Reports' ? 'Reports' : activePage as any} />
           ) : activePage === 'Dashboard' ? (
             <DashboardPage onAction={openDialog} />
           ) : parentModuleActive ? (

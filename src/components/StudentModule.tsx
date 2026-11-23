@@ -167,7 +167,13 @@ function statusClass(status: string) {
 }
 
 export default function StudentModule({ initialTab = "Overview", onBack }: { initialTab?: string; onBack?: () => void }) {
-  const [students, setStudents] = useState<Student[]>(initialStudents);
+  const [students, setStudents] = useState<Student[]>(() => {
+    try {
+      const saved = localStorage.getItem("vlearning-students");
+      return saved ? JSON.parse(saved) as Student[] : initialStudents;
+    } catch { return initialStudents; }
+  });
+  useEffect(() => { localStorage.setItem("vlearning-students", JSON.stringify(students)); }, [students]);
   const [activeTab, setActiveTab] = useState<Tab>("Overview");
   useEffect(() => { setActiveTab(initialTab as Tab); }, [initialTab]);
   const [attendanceOverviewLoading, setAttendanceOverviewLoading] = useState(true);
