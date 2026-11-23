@@ -12,6 +12,7 @@ interface SidebarProps {
   onSignOut: () => void;
   activeAcademicTab: string;
   activeHRTab: string;
+  activeHostelTab: string;
 }
 
 type MenuItem = [string, string];
@@ -59,6 +60,7 @@ const dropdownItems: Record<string, string[]> = {
   'Academics & Timetable': ['Overview', 'Class Scheduling & Timetable', 'Subject & Teacher Assignment', 'Course Outlines & Syllabi', 'Substitute Teachers', 'Academic Calendar'],
   'HR & Payroll': ['Overview', 'Employee Records', 'Attendance & Biometrics', 'Payroll Processing', 'Leave Management', 'HR Reports & Compliance'],
   Transport: ['Dashboard', 'Routes & Stops', 'Vehicles', 'Drivers', 'Student Allocation', 'Pickup & Drop Logs', 'Transport Fees'],
+  Hostel: ['Overview', 'Rooms & Buildings', 'Room Allocation', 'Occupancy Tracking', 'Hostel Fees & Payments', 'Meal Plans & Menus', 'Visitor Management', 'Security Logs'],
 };
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -72,6 +74,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onSignOut,
   activeAcademicTab,
   activeHRTab,
+  activeHostelTab,
 }) => {
   const [expandedMenu, setExpandedMenu] = useState<string | null>(() => {
     if (['Applications', 'Entrance Tests', 'Merit List', 'Fee Challans'].includes(activeItem)) return 'Admissions';
@@ -80,10 +83,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
     if (activeItem === 'Academics & Timetable') return 'Academics & Timetable';
     if (activeItem === 'HR & Payroll') return 'HR & Payroll';
     if (activeItem.startsWith('Transport ')) return 'Transport';
+    if (activeItem === 'Hostel') return 'Hostel';
     return null;
   });
 
-  const activeDropdown = activeItem.startsWith('Transport ') ? 'Transport' : Object.entries(dropdownItems).find(([, items]) => items.includes(activeItem))?.[0] ?? (activeItem === 'Examinations' ? 'Examinations' : undefined);
+  const activeDropdown = activeItem.startsWith('Transport ') ? 'Transport' : activeItem.startsWith('Hostel ') ? 'Hostel' : activeItem.startsWith('Hostel ') ? 'Hostel' : Object.entries(dropdownItems).find(([, items]) => items.includes(activeItem))?.[0] ?? (activeItem === 'Examinations' ? 'Examinations' : undefined);
   const financeOnly = /accountant|finance officer/i.test(currentUser?.role ?? '');
   const visibleGroups: MenuGroup[] = financeOnly
     ? [{ title: 'Finance', items: [['account_balance_wallet', 'Fees & Accounts']] }]
@@ -105,6 +109,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       else if (label === 'Academics & Timetable') onNavigate('Academics & Timetable');
       else if (label === 'HR & Payroll') onNavigate('HR & Payroll');
       else if (label === 'Transport') onNavigate('Transport');
+      else if (label === 'Hostel') onNavigate('Hostel');
       return;
     }
     setExpandedMenu((current) => (current === label ? null : label));
@@ -118,6 +123,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     else if (parent === 'Academics & Timetable') onNavigate(`AcademicTab:${item}`);
     else if (parent === 'HR & Payroll') onNavigate('HRTab:' + item);
     else if (parent === 'Transport') onNavigate('TransportTab:' + item);
+    else if (parent === 'Hostel') onNavigate('HostelTab:' + item);
     else onNavigate(item);
   };
 
@@ -164,7 +170,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         : label === 'Academics & Timetable' ? activeItem === 'Academics & Timetable' && activeAcademicTab === item
                         : label === 'HR & Payroll' ? activeItem === 'HR & Payroll' && activeHRTab === item
                         : label === 'Transport' ? activeItem === `Transport ${item}`
-                        : activeItem === item;
+                        : label === 'Hostel' ? activeItem === 'Hostel' && activeHostelTab === item : activeItem === item;
                       return <button
                         key={item}
                         type="button"
