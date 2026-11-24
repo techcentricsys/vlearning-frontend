@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { Sidebar } from './components/layout/Sidebar';
 import { Topbar } from './components/layout/Topbar';
 import { DashboardPage } from './modules/dashboard/pages/DashboardPage';
@@ -15,6 +15,7 @@ import AcademicsModule, { type AcademicTab } from './components/AcademicsModule'
 import HRPayrollModule, { type HRTab } from './components/HRPayrollModule';
 import TransportPage from './modules/transport/pages/TransportPage';
 import HostelBoardingModule, { type HostelTab } from './components/HostelBoardingModule';
+import TeacherStaffModule, { type TeacherStaffTab } from './components/TeacherStaffModule';
 
 const App: React.FC = () => {
   const [authPage, setAuthPage] = useState<'login' | 'register' | 'app'>(() => getSession() ? 'app' : 'login');
@@ -33,6 +34,7 @@ const App: React.FC = () => {
   const [academicTab, setAcademicTab] = useState<AcademicTab>('Overview');
   const [hrTab, setHrTab] = useState<HRTab>('Overview');
   const [hostelTab, setHostelTab] = useState<HostelTab>('Overview');
+  const [teacherStaffTab, setTeacherStaffTab] = useState<TeacherStaffTab>('Teacher Profiles');
   const [dialog, setDialog] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
   
@@ -52,6 +54,7 @@ const App: React.FC = () => {
         activeAcademicTab={academicTab}
         activeHRTab={hrTab}
         activeHostelTab={hostelTab}
+        activeTeacherStaffTab={teacherStaffTab}
         currentUser={currentUser}
         onSignOut={signOut}
         onNavigate={(item) => {
@@ -98,6 +101,14 @@ const App: React.FC = () => {
             setParentModuleActive(false);
             setActivePage('Hostel');
             setHostelTab(item.slice(10) as HostelTab);
+          } else if (item === 'Teachers & Staff') {
+            setParentModuleActive(false);
+            setActivePage('Teachers & Staff');
+            setTeacherStaffTab('Teacher Profiles');
+          } else if (item.startsWith('TeacherStaffTab:')) {
+            setParentModuleActive(false);
+            setActivePage('Teachers & Staff');
+            setTeacherStaffTab(item.slice(16) as TeacherStaffTab);
           } else if (item.startsWith('ExaminationTab:')) { 
             setParentModuleActive(false); 
             setActivePage(item.slice(15)); 
@@ -126,6 +137,8 @@ const App: React.FC = () => {
         <div className="p-6 max-w-[1800px] mx-auto">
           {activePage === 'Hostel' ? (
             <HostelBoardingModule initialTab={hostelTab} onTabChange={setHostelTab} />
+) : activePage === 'Teachers & Staff' ? (
+            <TeacherStaffModule initialTab={teacherStaffTab} onNavigate={setTeacherStaffTab} />
           ) : activePage === 'Students' ? (
             <StudentModule initialTab={studentTab} onBack={() => setStudentTab("Overview")} />
           ) : activePage === 'Fees & Accounts' ? (

@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { AuthUser } from '../../auth';
 
 interface SidebarProps {
@@ -13,6 +13,7 @@ interface SidebarProps {
   activeAcademicTab: string;
   activeHRTab: string;
   activeHostelTab: string;
+  activeTeacherStaffTab: string;
 }
 
 type MenuItem = [string, string];
@@ -58,6 +59,7 @@ const dropdownItems: Record<string, string[]> = {
   Admissions: ['Applications', 'Entrance Tests', 'Merit List', 'Fee Challans'],
   'Fees & Accounts': ['Overview', 'Fee Structures', 'Fee Challans', 'Collect Fees', 'Discounts & Scholarships', 'Fines', 'Refunds', 'Financial Reports'],
   'Academics & Timetable': ['Overview', 'Class Scheduling & Timetable', 'Subject & Teacher Assignment', 'Course Outlines & Syllabi', 'Substitute Teachers', 'Academic Calendar'],
+  'Teachers & Staff': ['Teacher Profiles', 'Class & Subject Allocation', 'Payroll Management', 'Attendance & Leave', 'Performance Evaluation'],
   'HR & Payroll': ['Overview', 'Employee Records', 'Attendance & Biometrics', 'Payroll Processing', 'Leave Management', 'HR Reports & Compliance'],
   Transport: ['Dashboard', 'Routes & Stops', 'Vehicles', 'Drivers', 'Student Allocation', 'Pickup & Drop Logs', 'Transport Fees'],
   Hostel: ['Overview', 'Rooms & Buildings', 'Room Allocation', 'Occupancy Tracking', 'Hostel Fees & Payments', 'Meal Plans & Menus', 'Visitor Management', 'Security Logs'],
@@ -75,6 +77,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   activeAcademicTab,
   activeHRTab,
   activeHostelTab,
+  activeTeacherStaffTab,
 }) => {
   const [expandedMenu, setExpandedMenu] = useState<string | null>(() => {
     if (['Applications', 'Entrance Tests', 'Merit List', 'Fee Challans'].includes(activeItem)) return 'Admissions';
@@ -82,12 +85,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
     if (activeItem === 'Fees & Accounts') return 'Fees & Accounts';
     if (activeItem === 'Academics & Timetable') return 'Academics & Timetable';
     if (activeItem === 'HR & Payroll') return 'HR & Payroll';
+    if (activeItem === 'Teachers & Staff') return 'Teachers & Staff';
     if (activeItem.startsWith('Transport ')) return 'Transport';
     if (activeItem === 'Hostel') return 'Hostel';
     return null;
   });
 
-  const activeDropdown = activeItem.startsWith('Transport ') ? 'Transport' : activeItem.startsWith('Hostel ') ? 'Hostel' : activeItem.startsWith('Hostel ') ? 'Hostel' : Object.entries(dropdownItems).find(([, items]) => items.includes(activeItem))?.[0] ?? (activeItem === 'Examinations' ? 'Examinations' : undefined);
+  const activeDropdown = activeItem.startsWith('Transport ') ? 'Transport' : activeItem.startsWith('Hostel ') ? 'Hostel' : activeItem.startsWith('Hostel ') ? 'Hostel' : Object.entries(dropdownItems).find(([, items]) => items.includes(activeItem))?.[0] ?? (activeItem === 'Teachers & Staff' ? 'Teachers & Staff' : activeItem === 'Examinations' ? 'Examinations' : undefined);
   const financeOnly = /accountant|finance officer/i.test(currentUser?.role ?? '');
   const visibleGroups: MenuGroup[] = financeOnly
     ? [{ title: 'Finance', items: [['account_balance_wallet', 'Fees & Accounts']] }]
@@ -108,6 +112,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       else if (label === 'Fees & Accounts') onNavigate('Fees & Accounts');
       else if (label === 'Academics & Timetable') onNavigate('Academics & Timetable');
       else if (label === 'HR & Payroll') onNavigate('HR & Payroll');
+      else if (label === 'Teachers & Staff') onNavigate('Teachers & Staff');
       else if (label === 'Transport') onNavigate('Transport');
       else if (label === 'Hostel') onNavigate('Hostel');
       return;
@@ -122,6 +127,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     else if (parent === 'Fees & Accounts') onNavigate(`FeesTab:${item}`);
     else if (parent === 'Academics & Timetable') onNavigate(`AcademicTab:${item}`);
     else if (parent === 'HR & Payroll') onNavigate('HRTab:' + item);
+    else if (parent === 'Teachers & Staff') onNavigate('TeacherStaffTab:' + item);
     else if (parent === 'Transport') onNavigate('TransportTab:' + item);
     else if (parent === 'Hostel') onNavigate('HostelTab:' + item);
     else onNavigate(item);
@@ -168,6 +174,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       const selected = label === 'Students' ? activeItem === 'Students' && activeStudentTab === item
                         : label === 'Fees & Accounts' ? activeItem === 'Fees & Accounts' && activeFeesTab === item
                         : label === 'Academics & Timetable' ? activeItem === 'Academics & Timetable' && activeAcademicTab === item
+                        : label === 'Teachers & Staff' ? activeItem === 'Teachers & Staff' && activeTeacherStaffTab === item
                         : label === 'HR & Payroll' ? activeItem === 'HR & Payroll' && activeHRTab === item
                         : label === 'Transport' ? activeItem === `Transport ${item}`
                         : label === 'Hostel' ? activeItem === 'Hostel' && activeHostelTab === item : activeItem === item;
