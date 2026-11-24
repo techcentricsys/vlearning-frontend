@@ -13,7 +13,8 @@ import { ensureDefaultAdmin, getSession, logout } from './auth';
 import { useEffect } from 'react';
 import AcademicsModule, { type AcademicTab } from './components/AcademicsModule';
 import HRPayrollModule, { type HRTab } from './components/HRPayrollModule';
-import TransportPage from './modules/transport/pages/TransportPage';
+import TransportPage from './modules/transport/pages/TransportPage';
+
 import HostelBoardingModule, { type HostelTab } from './components/HostelBoardingModule';
 import TeacherStaffModule, { type TeacherStaffTab } from './components/TeacherStaffModule';
 
