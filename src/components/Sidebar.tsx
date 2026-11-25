@@ -1,77 +1,161 @@
-import { useState } from "react";
+import React from 'react';
+import {
+  LayoutDashboard,
+  Users,
+  GraduationCap,
+  CalendarCheck2,
+  CalendarDays,
+  FileSpreadsheet,
+  Receipt,
+  UserSquare2,
+  BookOpen,
+  Bus,
+  Building2,
+  BarChart3,
+  Bell,
+  Settings,
+  MoreVertical,
+  ChevronRight,
+  Menu,
+  ShieldCheck,
+  CheckCircle2
+} from 'lucide-react';
+import { UserRole } from '../types';
 
-const menu = [
-  { section: "MAIN MENU", items: [
-    { label: "Dashboard", value: "Dashboard" },
-    { label: "Students", value: "Students" },
-    { label: "Admissions", value: "Students" },
-    { label: "Academics", value: "Examinations" },
-    { label: "Attendance", value: "Attendance" },
-    { label: "Fees & Accounts", value: "Fees" },
-    { label: "Examinations", value: "Examinations" },
-    { label: "Timetable", value: "Timetable" },
-  ]},
-  { section: "MANAGEMENT", items: [
-    { label: "Teachers & Staff", value: "Teachers" },
-    { label: "HR & Payroll", value: "Teachers" },
-    { label: "Library", value: "Library" },
-    { label: "Transport", value: "Transport" },
-    { label: "Hostel", value: "Hostel" },
-  ]},
-  { section: "SYSTEM", items: [
-    { label: "Reports & Analytics", value: "Reports" },
-    { label: "Notifications", value: "Dashboard" },
-    { label: "Settings", value: "Settings" },
-  ]},
-];
+interface SidebarProps {
+  activeRole: UserRole;
+  currentPath: string;
+  onNavigate: (path: string) => void;
+  collapsed: boolean;
+  onToggleCollapse: () => void;
+}
 
-export default function Sidebar({ onNavigate }: any) {
-  const [selected, setSelected] = useState("Dashboard");
-  const [collapsed, setCollapsed] = useState(false);
+export const Sidebar: React.FC<SidebarProps> = ({
+  activeRole,
+  currentPath,
+  onNavigate,
+  collapsed,
+  onToggleCollapse
+}) => {
+  const navSections = [
+    {
+      id: 'main',
+      title: 'MAIN MENU',
+      items: [
+        { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, path: 'dashboard' },
+        { id: 'students', label: 'Students', icon: GraduationCap, path: 'students' },
+        { id: 'admissions', label: 'Admissions', icon: UserSquare2, badge: '38', path: 'admissions' },
+        { id: 'academics', label: 'Academics', icon: CalendarDays, path: 'academics' },
+        { id: 'attendance', label: 'Attendance', icon: CalendarCheck2, path: 'attendance' },
+        { id: 'fees', label: 'Fees & Accounts', icon: Receipt, path: 'fees' },
+        { id: 'exams', label: 'Examinations', icon: FileSpreadsheet, path: 'exams' },
+      ]
+    },
+    {
+      id: 'management',
+      title: 'MANAGEMENT',
+      items: [
+        { id: 'teachers', label: 'Teachers & Staff', icon: Users, path: 'teachers' },
+        { id: 'payroll', label: 'HR & Payroll', icon: FileSpreadsheet, path: 'payroll' },
+        { id: 'library', label: 'Library', icon: BookOpen, path: 'library' },
+        { id: 'transport', label: 'Transport', icon: Bus, path: 'transport' },
+        { id: 'hostel', label: 'Hostel', icon: Building2, path: 'hostel' },
+      ]
+    },
+    {
+      id: 'system',
+      title: 'SYSTEM',
+      items: [
+        { id: 'reports', label: 'Reports & Analytics', icon: BarChart3, path: 'reports' },
+        { id: 'notifications', label: 'Notifications', icon: Bell, badge: '4', path: 'notifications' },
+        { id: 'settings', label: 'Settings', icon: Settings, path: 'settings' },
+      ]
+    }
+  ];
 
   return (
-    <aside className={`${collapsed ? "w-[68px]" : "w-[260px]"} min-h-screen bg-white border-r border-border flex flex-col sticky top-0 transition-all duration-300 ease-in-out overflow-hidden shrink-0`}>
-      
-      {/* TOP - LOGO + HAMBURGER */}
-      <div className="flex items-center gap-2 px-3 py-4 border-b border-border">
-        <button onClick={() => setCollapsed(!collapsed)} className="w-9 h-9 flex flex-col items-center justify-center gap-[5px] hover:bg-slate-100 shrink-0">
-          <span className={`block h-[2px] bg-text transition-all duration-300 ${collapsed ? "w-[20px] rotate-45 translate-y-[7px]" : "w-[20px]"}`}></span>
-          <span className={`block h-[2px] bg-text transition-all duration-300 ${collapsed ? "w-[20px] opacity-0" : "w-[20px]"}`}></span>
-          <span className={`block h-[2px] bg-text transition-all duration-300 ${collapsed ? "w-[20px] -rotate-45 -translate-y-[7px]" : "w-[20px]"}`}></span>
-        </button>
-
-        {!collapsed && (
-          <div className="flex items-center gap-2 whitespace-nowrap">
-            <div className="w-9 h-9 bg-primary text-white flex items-center justify-center font-bold text-[16px] shrink-0">V</div>
-            <div>
-              <p className="font-semibold text-[14px] leading-none">VLearnings <span className="text-[10px] bg-slate-100 text-secondary px-1.5 py-0.5 ml-1 font-medium border border-border">SMS</span></p>
-              <p className="text-[11px] text-muted mt-1">School Management System</p>
-            </div>
+    <aside
+      className={`relative z-20 flex flex-col bg-white border-r border-slate-200/90 transition-all duration-300 ease-in-out shrink-0 select-none ${
+        collapsed ? 'w-20' : 'w-64 lg:w-70'
+      }`}
+    >
+      {/* Brand Header matching screenshot */}
+      <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+        <div 
+          className="flex items-center gap-3 overflow-hidden cursor-pointer group" 
+          onClick={() => onNavigate('dashboard')}
+        >
+          {/* Logo Mark: Purple square with graduation cap */}
+          <div className="w-10 h-10 rounded-2xl bg-[#5B50E8] flex items-center justify-center text-white shadow-md shadow-indigo-500/20 shrink-0">
+            <GraduationCap className="w-5 h-5 text-white" />
           </div>
-        )}
+          {!collapsed && (
+            <div className="flex flex-col truncate">
+              <span className="font-display font-extrabold text-base text-slate-900 tracking-tight flex items-center gap-1.5">
+                VLearnings
+                <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-indigo-50 text-[#5B50E8] border border-indigo-100">
+                  SMS
+                </span>
+              </span>
+              <span className="text-[11px] text-slate-400 truncate">
+                v2.4.0 Enterprise
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Toggle Collapse */}
+        <button
+          onClick={onToggleCollapse}
+          className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          {collapsed ? <ChevronRight className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+        </button>
       </div>
 
-      {/* MENU LIST */}
-      <div className="flex-1 overflow-y-auto px-2 pt-3">
-        {menu.map((g) => (
-          <div key={g.section} className="mb-4">
-            {!collapsed && <p className="text-[11px] font-semibold text-muted px-2 mb-2 tracking-wide">{g.section}</p>}
-            {collapsed && <div className="h-px bg-border mx-2 mb-2"></div>}
-            {g.items.map((item) => {
-              const isActive = selected === item.label;
+      {/* Navigation Groups */}
+      <div className="flex-1 overflow-y-auto px-3.5 py-4 space-y-6">
+        {navSections.map((section) => (
+          <div key={section.id} className="space-y-1">
+            {!collapsed && (
+              <div className="px-3 pb-1.5 text-[10px] font-bold tracking-wider text-slate-400 uppercase">
+                {section.title}
+              </div>
+            )}
+            {section.items.map((item) => {
+              const Icon = item.icon;
+              const isActive = currentPath === item.path || (item.path === 'dashboard' && currentPath === '');
               return (
                 <button
-                  key={item.label}
-                  title={item.label}
-                  onClick={() => { setSelected(item.label); onNavigate(item.value); }}
-                  className={`w-full text-left px-3 py-2 text-[13.5px] mb-0.5 border-l-2 flex items-center gap-2 transition-all duration-200 ${
-                    isActive ? "bg-slate-100 text-primary font-semibold border-primary" : "text-secondary border-transparent hover:bg-slate-50 hover:text-text"
+                  key={item.id}
+                  onClick={() => onNavigate(item.path)}
+                  title={collapsed ? item.label : undefined}
+                  className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all relative ${
+                    isActive
+                      ? 'bg-[#EEF0FD] text-[#5B50E8] font-bold'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                   }`}
                 >
-                  <span className={`w-6 h-6 flex items-center justify-center text-[12px] font-bold shrink-0 ${isActive ? "bg-primary text-white" : "bg-slate-100 text-secondary"}`}>
-                    {item.label.charAt(0)}
-                  </span>
-                  {!collapsed && <span className="truncate">{item.label}</span>}
+                  <Icon
+                    className={`w-4 h-4 shrink-0 transition-transform ${
+                      isActive ? 'text-[#5B50E8]' : 'text-slate-400 group-hover:text-slate-600'
+                    }`}
+                  />
+                  {!collapsed && (
+                    <span className="truncate flex-1 text-left">{item.label}</span>
+                  )}
+                  {!collapsed && item.badge && (
+                    <span
+                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 ${
+                        isActive
+                          ? 'bg-white text-[#5B50E8] shadow-2xs'
+                          : 'bg-indigo-50 text-[#5B50E8]'
+                      }`}
+                    >
+                      {item.badge}
+                    </span>
+                  )}
                 </button>
               );
             })}
@@ -79,17 +163,41 @@ export default function Sidebar({ onNavigate }: any) {
         ))}
       </div>
 
-      {/* BOTTOM PROFILE */}
-      <div className="flex items-center gap-2 p-3 border-t border-border bg-bg">
-        <div className="w-8 h-8 bg-primary text-white flex items-center justify-center text-[12px] font-bold shrink-0">SJ</div>
-        {!collapsed && (
-          <div className="flex-1 min-w-0">
-            <p className="text-[13px] font-semibold leading-none truncate">Dr. Sarah Jenkins</p>
-            <p className="text-[11px] text-muted mt-0.5">Super Admin</p>
+      {/* User Profile Footer matching screenshot */}
+      <div className="p-3.5 border-t border-slate-100 bg-white">
+        {!collapsed ? (
+          <div className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer group">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="relative">
+                <img 
+                  src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=120&q=80" 
+                  alt="Dr. Sarah Jenkins"
+                  className="w-8 h-8 rounded-full object-cover ring-1 ring-slate-200"
+                />
+                <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-white"></span>
+              </div>
+              <div className="truncate">
+                <div className="text-xs font-bold text-slate-800 leading-tight group-hover:text-[#5B50E8] transition-colors truncate">
+                  Dr. Sarah Jenkins
+                </div>
+                <div className="text-[10px] text-slate-400 truncate">
+                  Super Admin
+                </div>
+              </div>
+            </div>
+            <MoreVertical className="w-4 h-4 text-slate-400 shrink-0" />
+          </div>
+        ) : (
+          <div className="flex justify-center">
+            <img 
+              src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=120&q=80" 
+              alt="Profile"
+              className="w-8 h-8 rounded-full object-cover ring-1 ring-slate-200"
+            />
           </div>
         )}
-        {!collapsed && <span className="w-2 h-2 bg-success shrink-0"></span>}
       </div>
+
     </aside>
   );
-}
+};
